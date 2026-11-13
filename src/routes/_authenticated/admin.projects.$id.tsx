@@ -1,0 +1,1397 @@
+import { getPShreeContent, P_SHREE_SLUG, pShreeContentSchema } from "@/lib/p-shree";
+import { useMemo, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+
+import { friendlyError } from "@/lib/error-messages";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ArrowLeft,
+  Save,
+  Building2,
+  Layers,
+  Home,
+  Plus,
+  Trash2,
+  Pencil,
+  Image as ImageIcon,
+  FileText,
+  Grid3x3,
+  ExternalLink,
+} from "lucide-react";
+import { useSession } from "@/hooks/useSession";
+import { RoleGuard } from "@/components/aawash/AuthGuard";
+import { AdminShell } from "@/components/aawash/admin/AdminShell";
+import {
+  adminGetProject,
+  adminUpsertProject,
+  adminListBuildings,
+  adminUpsertBuilding,
+  adminDeleteBuilding,
+  adminUpsertFloor,
+  adminDeleteFloor,
+  adminUpsertFlatFull,
+  adminDeleteFlat,
+  adminBulkCreateFlats,
+  adminListFlatStatusAudit,
+} from "@/lib/project-admin.functions";
+import { adminGetProjectInventory, adminUpdateFlatStatus, type AdminFlat } from "@/lib/inventory.functions";
+import { ConfirmDialog } from "@/components/aawash/admin/ConfirmDialog";
+import { StructureForm, type StructureEditor } from "@/components/aawash/admin/StructureForm";
+import { suggestFloorNumber, suggestTowerCode } from "@/lib/project-structure";
+import { TowerLayoutReview } from "@/components/aawash/admin/TowerLayoutReview";
+import { formatINR } from "@/components/aawash/dashboard-kit";
+import { canEdit, type Role } from "@/lib/permissions";
+import { ImageUploadField, ImageGalleryUploader, Model3DUploadField } from "@/components/aawash/admin/MediaUploaders";
+import { refreshPublicProjects } from "@/lib/admin-cache";
+import { useRealtimeInvalidate } from "@/hooks/useRealtimeInvalidate";
+import { DEFAULT_PROJECT_FLATS, getProjectFlats, type ProjectFlatCard } from "@/lib/project-flats";
+
+export const Route = createFileRoute("/_authenticated/admin/projects/$id")({
+  component: EditProjectPage,
+  head: () => ({ meta: [
+    { title: "Project Inventory & Layout Review — Aawaash Admin" },
+    { name: "description", content: "Manage project towers, floors, flats, media, and AI-assisted inventory reviews." },
+    { property: "og:title", content: "Project Inventory & Layout Review — Aawaash Admin" },
+    { property: "og:description", content: "Manage towers, floors, flat availability, and tower layout reviews." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
+  ] }),
+});
+
+function EditProjectPage() {
+  return (
+    <RoleGuard allow={["super_admin"]}>
+      <EditProjectContent />
+    </RoleGuard>
+  );
+}
+
+type Tab = "overview" | "buildings" | "inventory" | "media" | "content";
+
+function EditProjectContent() {
+  const { profile } = useSession();
+  const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  const getFn = useServerFn(adminGetProject);
+  const { data: project, isLoading, isError, refetch } = useQuery({
+    queryKey: ["admin", "project", id],
+    queryFn: () => getFn({ data: { id } }),
+  });
+
+  const [tab, setTab] = useState<Tab>("overview");
+
+  if (isLoading) {
+    return (
+      <AdminShell profile={profile}>
+        <div className="h-48 animate-pulse rounded-4xl bg-muted/40" />
+      </AdminShell>
+    );
+  }
+  if (!project) {
+    return (
+      <AdminShell profile={profile}>
+        <div className="glass-card grid place-items-center rounded-4xl px-8 py-20 text-center">
+          <h3 className="text-lg font-bold text-foreground">{isError ? "Project could not be loaded" : "Project not found"}</h3>
+          {isError && <button type="button" onClick={() => void refetch()} className="mt-3 text-sm font-semibold text-primary">Try again</button>}
+          <Link to="/admin/projects" className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+            Back to Projects
+          </Link>
+        </div>
+      </AdminShell>
+    );
+  }
+
+  const tabs: Array<{ id: Tab; label: string; icon: React.ElementType }> = [
+    { id: "overview", label: "Overview", icon: FileText },
+    { id: "buildings", label: "Structure", icon: Building2 },
+    { id: "inventory", label: "Inventory", icon: Grid3x3 },
+    { id: "media", label: "Media", icon: ImageIcon },
+    { id: "content", label: "Content & SEO", icon: FileText },
+  ];
+
+  return (
+    <AdminShell profile={profile}>
+      <button
+        onClick={() => navigate({ to: "/admin/projects" })}
+        className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft size={14} /> Back to Projects
+      </button>
+
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="truncate text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            {project.name}
+          </h1>
+          <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+              {project.slug}
+            </span>
+            <span>·</span>
+            <span>{project.location}</span>
+          </p>
+        </div>
+        <Link
+          to="/projects/$slug"
+          params={{ slug: project.slug }}
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground"
+        >
+          <ExternalLink size={14} /> View public page
+        </Link>
+      </div>
+
+      <div className="glass-card mb-6 inline-flex flex-wrap gap-1 rounded-2xl p-1 shadow-[var(--shadow-soft)]">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
+              tab === t.id
+                ? "bg-primary text-primary-foreground shadow-[var(--shadow-glow)]"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <t.icon size={14} />
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" && <OverviewTab project={project} onSaved={() => { void qc.invalidateQueries({ queryKey: ["admin", "project", id] }); void refreshPublicProjects(qc); }} />}
+      {tab === "buildings" && <BuildingsTab projectId={id} />}
+      {tab === "inventory" && <InventoryTab projectId={id} slug={project.slug} />}
+      {tab === "media" && <MediaTab project={project} onSaved={() => { void qc.invalidateQueries({ queryKey: ["admin", "project", id] }); void refreshPublicProjects(qc); }} />}
+      {tab === "content" && <ContentTab project={project} onSaved={() => { void qc.invalidateQueries({ queryKey: ["admin", "project", id] }); void refreshPublicProjects(qc); }} />}
+    </AdminShell>
+  );
+}
+
+/* ==================== OVERVIEW ==================== */
+
+function OverviewTab({ project, onSaved }: { project: Record<string, unknown>; onSaved: () => void }) {
+  const upsert = useServerFn(adminUpsertProject);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [ok, setOk] = useState(false);
+
+  const p = project as Record<string, string | number | null>;
+  const initialFlats = getProjectFlats(project.extra);
+
+  // Live inventory counters
+  const [total, setTotal] = useState<number>(Number(p.total_flats ?? 0));
+  const [available, setAvailable] = useState<number>(Number(p.available_flats ?? 0));
+  const [reserved, setReserved] = useState<number>(Number(p.reserved_flats ?? 0));
+  const [sold, setSold] = useState<number>(Number(p.sold_flats ?? 0));
+
+  const allocated = available + reserved + sold;
+  const remaining = total - allocated;
+  const counterError =
+    total < 0 || available < 0 || reserved < 0 || sold < 0
+      ? "Values cannot be negative"
+      : allocated > total
+      ? `Available + reserved + sold (${allocated}) exceeds total flats (${total})`
+      : null;
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setOk(false);
+    if (counterError) {
+      setError(counterError);
+      return;
+    }
+    setSaving(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const raw = Object.fromEntries(fd.entries());
+      await upsert({ data: { ...raw, id: project.id } as never });
+      setOk(true);
+      onSaved();
+    } catch (err: unknown) {
+      setError(friendlyError(err, "Couldn't save this project. Please check the information and try again."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-6">
+      <Section title="Identity">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Project Name" name="name" required defaultValue={p.name as string} />
+          <Field label="Slug" name="slug" required pattern="[a-z0-9-]+" defaultValue={p.slug as string} />
+          <Field label="Location" name="location" required defaultValue={p.location as string} />
+          <Field label="Address" name="address" defaultValue={(p.address as string) ?? ""} />
+          <Field label="Tag" name="tag" defaultValue={(p.tag as string) ?? ""} />
+          <SelectField label="Visibility" name="visibility" defaultValue={(p.visibility as string) ?? "public"} options={[
+            { value: "public", label: "Public" },
+            { value: "internal", label: "Internal" },
+            { value: "draft", label: "Draft" },
+            { value: "archived", label: "Archived" },
+          ]} />
+        </div>
+      </Section>
+
+      <Section title="Type & Status">
+        <div className="grid gap-4 md:grid-cols-2">
+          <SelectField label="Project Type" name="project_type" defaultValue={(p.project_type as string) ?? "flat_inventory"} options={[
+            { value: "flat_inventory", label: "Flat Inventory" },
+            { value: "plot", label: "Plot" },
+            { value: "villa", label: "Villa" },
+            { value: "commercial", label: "Commercial" },
+          ]} />
+          <SelectField label="Construction Status" name="construction_status" defaultValue={(p.construction_status as string) ?? "planning"} options={[
+            { value: "planning", label: "Planning" },
+            { value: "under_construction", label: "Under Construction" },
+            { value: "nearing_completion", label: "Nearing Completion" },
+            { value: "ready_to_move", label: "Ready to Move" },
+            { value: "completed", label: "Completed" },
+            { value: "sold_out", label: "Sold Out" },
+          ]} />
+          <Field label="Launch Date" name="launch_date" type="date" defaultValue={(p.launch_date as string)?.slice(0, 10) ?? ""} />
+          <Field label="Possession Date" name="possession_date" type="date" defaultValue={(p.possession_date as string)?.slice(0, 10) ?? ""} />
+          <Field label="Completion %" name="completion_percent" type="number" min={0} max={100} defaultValue={(p.completion_percent as number) ?? 0} />
+          <Field label="Planned towers" name="total_buildings" type="number" min={0} defaultValue={(p.total_buildings as number) ?? ""} />
+          <Field label="Planned floors" name="total_floors" type="number" min={0} defaultValue={(p.total_floors as number) ?? ""} />
+          <Field label="Minimum area (sq ft)" name="area_min" type="number" min={0} step="any" defaultValue={(p.area_min as number) ?? ""} />
+          <Field label="Maximum area (sq ft)" name="area_max" type="number" min={0} step="any" defaultValue={(p.area_max as number) ?? ""} />
+          <Field label="Display Priority" name="display_priority" type="number" min={0} max={1000} defaultValue={(p.display_priority as number) ?? 0} />
+        </div>
+      </Section>
+
+      <Section title="Inventory Counters (live)">
+        <div className="grid gap-4 md:grid-cols-4">
+          <NumberBox label="Total Flats" name="total_flats" value={total} onChange={setTotal} min={0} />
+          <NumberBox label="Available" name="available_flats" value={available} onChange={setAvailable} min={0} max={total} tone="emerald" />
+          <NumberBox label="Reserved" name="reserved_flats" value={reserved} onChange={setReserved} min={0} max={total} tone="amber" />
+          <NumberBox label="Sold" name="sold_flats" value={sold} onChange={setSold} min={0} max={total} tone="rose" />
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
+          <span className="rounded-full bg-muted px-3 py-1 font-semibold text-muted-foreground">
+            Allocated: <span className="text-foreground">{allocated}</span> / {total}
+          </span>
+          <span
+            className={`rounded-full px-3 py-1 font-semibold ${
+              remaining < 0
+                ? "bg-rose-500/15 text-rose-700"
+                : remaining === 0
+                ? "bg-emerald-500/15 text-emerald-700"
+                : "bg-primary-soft text-primary"
+            }`}
+          >
+            Remaining: {remaining}
+          </span>
+          {counterError && (
+            <span className="rounded-full bg-rose-500/15 px-3 py-1 font-semibold text-rose-700">
+              ⚠ {counterError}
+            </span>
+          )}
+        </div>
+      </Section>
+
+      <Section title="Pricing">
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label="Price From (₹)" name="price_from" type="number" min={0} required defaultValue={(p.price_from as number) ?? 0} />
+          <Field label="Price Min (₹)" name="price_min" type="number" min={0} defaultValue={(p.price_min as number) ?? ""} />
+          <Field label="Price Max (₹)" name="price_max" type="number" min={0} defaultValue={(p.price_max as number) ?? ""} />
+        </div>
+      </Section>
+
+      <Section title="Location & Map">
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label="Latitude" name="latitude" type="number" step="0.0000001" defaultValue={(p.latitude as number) ?? ""} />
+          <Field label="Longitude" name="longitude" type="number" step="0.0000001" defaultValue={(p.longitude as number) ?? ""} />
+          <Field label="Google Map URL" name="google_map_url" type="url" defaultValue={(p.google_map_url as string) ?? ""} />
+        </div>
+      </Section>
+
+      <Section title="Flat showcase">
+        <p className="mb-4 text-xs text-muted-foreground">
+          These three cards appear after Amenities on the public project page. Add a photo, area and four highlights for each plan.
+        </p>
+        <FlatsEditor projectId={String(project.id)} initial={initialFlats} />
+      </Section>
+
+      {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-700">{error}</div>}
+      {ok && <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-700">Saved.</div>}
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={saving || !!counterError}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] disabled:opacity-60"
+        >
+          <Save size={14} /> {saving ? "Saving…" : "Save Changes"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function FlatsEditor({ projectId, initial }: { projectId: string; initial: ProjectFlatCard[] }) {
+  const [flats, setFlats] = useState<ProjectFlatCard[]>(() => structuredClone(initial));
+
+  function patch(index: number, next: Partial<ProjectFlatCard>) {
+    setFlats((current) => current.map((flat, itemIndex) => (itemIndex === index ? { ...flat, ...next } : flat)));
+  }
+
+  function patchAmenity(index: number, amenityIndex: number, value: string) {
+    setFlats((current) => current.map((flat, itemIndex) => {
+      if (itemIndex !== index) return flat;
+      const amenities = [...flat.amenities];
+      amenities[amenityIndex] = value;
+      return { ...flat, amenities };
+    }));
+  }
+
+  return (
+    <div className="space-y-4">
+      <input type="hidden" name="extra" value={JSON.stringify({ flats })} />
+      {flats.map((flat, index) => (
+        <div key={index} className="rounded-2xl border border-border bg-background p-4">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary-soft text-xs font-extrabold text-primary">{index + 1}</span>
+            <div>
+              <h3 className="text-sm font-bold text-foreground">Flat card {index + 1}</h3>
+              <p className="text-[11px] text-muted-foreground">Shown as a swipeable plan card</p>
+            </div>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[minmax(240px,0.8fr)_1.2fr]">
+            <ImageUploadField
+              label="Card image"
+              name={`flat-${index}-image`}
+              value={flat.image}
+              folder={`projects/${projectId}/flats/${index}`}
+              onChange={(image) => patch(index, { image })}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Title" name={`flat-${index}-title`} value={flat.title} onChange={(event) => patch(index, { title: event.target.value })} />
+              <Field label="Area" name={`flat-${index}-area`} value={flat.area} onChange={(event) => patch(index, { area: event.target.value })} />
+              <div className="sm:col-span-2">
+                <span className="mb-2 block text-xs font-semibold text-muted-foreground">Amenities (4)</span>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {flat.amenities.map((amenity, amenityIndex) => (
+                    <input
+                      key={`${index}-${amenityIndex}`}
+                      aria-label={`${flat.title} amenity ${amenityIndex + 1}`}
+                      value={amenity}
+                      onChange={(event) => patchAmenity(index, amenityIndex, event.target.value)}
+                      className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => setFlats(structuredClone(DEFAULT_PROJECT_FLATS))}
+        className="text-xs font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+      >
+        Reset flat cards to defaults
+      </button>
+    </div>
+  );
+}
+
+function NumberBox({
+  label,
+  name,
+  value,
+  onChange,
+  min,
+  max,
+  tone,
+}: {
+  label: string;
+  name: string;
+  value: number;
+  onChange: (n: number) => void;
+  min?: number;
+  max?: number;
+  tone?: "emerald" | "amber" | "rose";
+}) {
+  const toneMap: Record<string, string> = {
+    emerald: "focus:border-emerald-500 focus:ring-emerald-500/25",
+    amber: "focus:border-amber-500 focus:ring-amber-500/25",
+    rose: "focus:border-rose-500 focus:ring-rose-500/25",
+  };
+  const ring = tone ? toneMap[tone] : "focus:border-primary focus:ring-primary/25";
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">{label}</span>
+      <div className="flex items-stretch overflow-hidden rounded-2xl border border-border bg-background focus-within:ring-2 focus-within:ring-primary/20">
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min ?? 0, value - 1))}
+          aria-label={`Decrease ${label}`}
+          className="grid w-10 place-items-center text-lg font-bold text-muted-foreground hover:bg-muted"
+        >
+          −
+        </button>
+        <input
+          name={name}
+          type="number"
+          inputMode="numeric"
+          min={min}
+          max={max}
+          value={Number.isFinite(value) ? value : 0}
+          onChange={(e) => {
+            const n = Number(e.target.value);
+            if (Number.isNaN(n)) return;
+            onChange(n);
+          }}
+          className={`w-full border-x border-border bg-transparent px-3 py-2.5 text-center text-base font-bold text-foreground outline-none transition-colors ${ring}`}
+        />
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(max ?? Number.MAX_SAFE_INTEGER, value + 1))}
+          aria-label={`Increase ${label}`}
+          className="grid w-10 place-items-center text-lg font-bold text-muted-foreground hover:bg-muted"
+        >
+          +
+        </button>
+      </div>
+    </label>
+  );
+}
+
+/* ==================== BUILDINGS / FLOORS / FLATS ==================== */
+
+function BuildingsTab({ projectId }: { projectId: string }) {
+  const qc = useQueryClient();
+  const listFn = useServerFn(adminListBuildings);
+  const upsertB = useServerFn(adminUpsertBuilding);
+  const deleteB = useServerFn(adminDeleteBuilding);
+  const upsertFloor = useServerFn(adminUpsertFloor);
+  const deleteFloor = useServerFn(adminDeleteFloor);
+  const upsertFlat = useServerFn(adminUpsertFlatFull);
+  const deleteFlat = useServerFn(adminDeleteFlat);
+  const bulkFlats = useServerFn(adminBulkCreateFlats);
+  const invFn = useServerFn(adminGetProjectInventory);
+
+  const structure = useQuery({
+    queryKey: ["admin", "project-inv", projectId],
+    queryFn: () => invFn({ data: { project_id: projectId } }),
+    staleTime: 30_000,
+  });
+  const { data: towerRows, isLoading, isError, refetch } = useQuery({
+    queryKey: ["admin", "buildings", projectId],
+    queryFn: () => listFn({ data: { project_id: projectId } }),
+  });
+
+  const buildings = towerRows?.map(tower => ({
+    ...tower,
+    total_floors: structure.data?.floors.filter(floor => floor.building_id === tower.id).length ?? tower.total_floors,
+    total_flats: structure.data?.flats.filter(flat => flat.building_id === tower.id).length ?? tower.total_flats,
+  }));
+  const [openBuilding, setOpenBuilding] = useState<string | null>(null);
+  const [removingTower, setRemovingTower] = useState<string | null>(null);
+  const [editor, setEditor] = useState<StructureEditor | null>(null);
+
+  async function refresh() {
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["admin", "buildings", projectId] }),
+      qc.invalidateQueries({ queryKey: ["admin", "project-inv", projectId] }),
+      qc.invalidateQueries({ queryKey: ["admin", "inv-view", projectId] }),
+      refreshPublicProjects(qc),
+      qc.invalidateQueries({ queryKey: ["admin", "project", projectId] }),
+    ]);
+  }
+
+  function editBuilding(building?: NonNullable<typeof buildings>[number]) {
+    const usedCodes = (buildings ?? []).filter(row => row.id !== building?.id).map(row => row.code);
+    setEditor({
+      title: building ? "Edit tower" : "Add tower",
+      description: "Enter the tower name. Leave the code blank to generate a unique one.",
+      fields: [
+        { name: "name", label: "Tower name", initial: building?.name, required: true, maxLength: 80 },
+        { name: "code", label: "Tower code", initial: building?.code, maxLength: 20 },
+        { name: "description", label: "Description", initial: building?.description, maxLength: 500 },
+        { name: "cover_url", label: "Cover image URL or website path", initial: building?.cover_url, maxLength: 2000 },
+      ],
+      async save(values) {
+        const saved = await upsertB({ data: {
+          project_id: projectId, id: building?.id, name: values.name,
+          code: values.code.trim() || suggestTowerCode(values.name, usedCodes),
+          description: values.description || null, cover_url: values.cover_url,
+          total_floors: building?.total_floors ?? 0, ordering: building?.ordering ?? buildings?.length ?? 0,
+        } });
+        qc.setQueryData<typeof towerRows>(["admin", "buildings", projectId], previous =>
+          [...(previous ?? []).filter(row => row.id !== saved.id), saved].sort((a, b) => a.ordering - b.ordering));
+        setOpenBuilding(saved.id);
+      },
+    });
+  }
+
+
+  return (
+    <div className="space-y-4">
+      {removingTower && <ConfirmDialog open onOpenChange={open => { if (!open) setRemovingTower(null); }} destructive
+        title="Delete this tower?" description="Its floors and flats will also be deleted. A linked record may prevent removal."
+        confirmLabel="Delete tower" successMessage="Tower removed" onConfirm={async () => {
+          await deleteB({ data: { id: removingTower } });
+          qc.setQueryData<typeof towerRows>(["admin", "buildings", projectId], previous => previous?.filter(row => row.id !== removingTower));
+          void refresh();
+        }} />}
+      {editor && <StructureForm editor={editor} onClose={() => setEditor(null)} onSaved={() => {
+        setEditor(null);
+        toast.success("Tower saved");
+        void refresh();
+      }} />}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-bold text-foreground">Buildings, Floors & Flats</h2>
+        <button type="button" onClick={() => editBuilding()} disabled={isLoading || isError} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]">
+          <Plus size={14} /> Add Tower
+        </button>
+      </div>
+
+      {isLoading ? <p role="status">Loading towers…</p> : isError ? (
+        <p role="alert">Towers could not be loaded. <button type="button" onClick={() => void refetch()} className="font-semibold text-primary">Try again</button></p>
+      ) : !buildings?.length ? (
+        <div className="glass-card grid place-items-center rounded-3xl px-8 py-16 text-center">
+          <Building2 size={32} className="text-muted-foreground" />
+          <p className="mt-3 text-sm text-muted-foreground">No buildings yet. Add the first one to start building inventory.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {buildings.map((b) => (
+            <BuildingRow
+              key={b.id as string}
+              b={b as Record<string, unknown>}
+              projectId={projectId}
+              isOpen={openBuilding === b.id}
+              onToggle={() => setOpenBuilding(openBuilding === b.id ? null : (b.id as string))}
+              onEdit={() => editBuilding(b)}
+              onDelete={() => setRemovingTower(b.id)}
+              onFloorSaved={refresh}
+              upsertFloor={upsertFloor}
+              deleteFloor={deleteFloor}
+              upsertFlat={upsertFlat}
+              deleteFlat={deleteFlat}
+              bulkFlats={bulkFlats}
+              invFn={invFn}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BuildingRow({
+  b, projectId, isOpen, onToggle, onEdit, onDelete, onFloorSaved,
+  upsertFloor, deleteFloor, upsertFlat, deleteFlat, bulkFlats, invFn,
+}: {
+  b: Record<string, unknown>;
+  projectId: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onFloorSaved: () => Promise<void>;
+  upsertFloor: (args: { data: unknown }) => Promise<unknown>;
+  deleteFloor: (args: { data: unknown }) => Promise<unknown>;
+  upsertFlat: (args: { data: unknown }) => Promise<unknown>;
+  deleteFlat: (args: { data: unknown }) => Promise<unknown>;
+  bulkFlats: (args: { data: unknown }) => Promise<unknown>;
+  invFn: (args: { data: unknown }) => Promise<unknown>;
+}) {
+  return (
+    <div className="rounded-3xl border border-border bg-surface shadow-[var(--shadow-soft)]">
+      <div className="flex items-center justify-between gap-4 p-4">
+        <button type="button" aria-expanded={isOpen} onClick={onToggle} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary">
+            <Building2 size={18} />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 truncate text-base font-bold text-foreground">
+              {b.name as string}
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{b.code as string}</span>
+            </div>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {(b.total_floors as number) ?? 0} floors · {(b.total_flats as number) ?? 0} flats
+            </p>
+          </div>
+        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button type="button" aria-label={`Edit ${b.name}`} onClick={onEdit} className="grid h-8 w-8 place-items-center rounded-full border border-border text-muted-foreground hover:text-foreground"><Pencil size={12} /></button>
+          <button type="button" aria-label={`Delete ${b.name}`} onClick={onDelete} className="grid h-8 w-8 place-items-center rounded-full border border-border text-muted-foreground hover:text-rose-500"><Trash2 size={12} /></button>
+        </div>
+      </div>
+
+      {isOpen && (
+        <FloorsPanel
+          buildingId={b.id as string}
+          projectId={projectId}
+          onSaved={onFloorSaved}
+          upsertFloor={upsertFloor}
+          deleteFloor={deleteFloor}
+          upsertFlat={upsertFlat}
+          deleteFlat={deleteFlat}
+          bulkFlats={bulkFlats}
+          invFn={invFn}
+        />
+      )}
+    </div>
+  );
+}
+
+function FloorsPanel({
+  buildingId, projectId, onSaved,
+  upsertFloor, deleteFloor, upsertFlat, deleteFlat, bulkFlats, invFn,
+}: {
+  buildingId: string;
+  projectId: string;
+  onSaved: () => Promise<void>;
+  upsertFloor: (args: { data: unknown }) => Promise<unknown>;
+  deleteFloor: (args: { data: unknown }) => Promise<unknown>;
+  upsertFlat: (args: { data: unknown }) => Promise<unknown>;
+  deleteFlat: (args: { data: unknown }) => Promise<unknown>;
+  bulkFlats: (args: { data: unknown }) => Promise<unknown>;
+  invFn: (args: { data: unknown }) => Promise<unknown>;
+}) {
+  const [editor, setEditor] = useState<StructureEditor | null>(null);
+  const [removing, setRemoving] = useState<{ kind: "floor" | "flat"; id: string } | null>(null);
+  const { data: inv, isLoading, isError, refetch } = useQuery({
+    queryKey: ["admin", "project-inv", projectId],
+    queryFn: () => invFn({ data: { project_id: projectId } }),
+    staleTime: 30_000,
+  });
+
+  const floors = useMemo(() => {
+    const arr = (inv as { floors?: Array<{ id: string; building_id: string; number: number; name: string | null; total_flats: number; floor_plan_url: string | null }> } | null)?.floors ?? [];
+    return arr.filter((f) => f.building_id === buildingId).sort((a, b) => a.number - b.number);
+  }, [inv, buildingId]);
+  const flats = useMemo(() => {
+    const arr = (inv as { flats?: AdminFlat[] } | null)?.flats ?? [];
+    return arr.filter((f) => f.building_id === buildingId);
+  }, [inv, buildingId]);
+
+  const scope = { project_id: projectId, building_id: buildingId };
+  function editFloor(floor?: (typeof floors)[number]) {
+    setEditor({
+      title: floor ? "Edit floor" : "Add floor",
+      description: "Use 0 for ground level and negative numbers for basements.",
+      fields: [
+        { name: "number", label: "Floor number", type: "number", required: true, min: -5, max: 200,
+          initial: floor?.number ?? suggestFloorNumber(floors.map(item => item.number)) },
+        { name: "name", label: "Floor name (optional)", initial: floor?.name, maxLength: 60 },
+        { name: "floor_plan_url", label: "Floor plan URL or website path", initial: floor?.floor_plan_url, maxLength: 2000 },
+      ],
+      save: values => upsertFloor({ data: { ...scope, ...values, id: floor?.id, ordering: floor ? Math.max(0, floors.indexOf(floor)) : floors.length } }),
+    });
+  }
+
+  function editFlat(floorId: string, flat?: AdminFlat) {
+    setEditor({
+      title: flat ? "Edit flat" : "Add flat",
+      description: "Flat codes are unique across the project.",
+      fields: [
+        { name: "unit_code", label: "Flat code", initial: flat?.unit_code, required: true, maxLength: 40 },
+        { name: "configuration", label: "Configuration", initial: flat?.configuration, maxLength: 60 },
+        { name: "bedrooms", label: "Bedrooms", type: "number", required: true, min: 0, initial: flat?.bedrooms ?? 2 },
+        { name: "bathrooms", label: "Bathrooms", type: "number", required: true, min: 0, initial: flat?.bathrooms ?? 2 },
+        { name: "balconies", label: "Balconies", type: "number", required: true, min: 0, initial: flat?.balconies ?? 1 },
+        { name: "area_sqft", label: "Area in sq ft", initial: flat?.area_sqft, type: "number", min: 0, step: .01 },
+        { name: "price", label: "Price in ₹", initial: flat?.price, type: "number", min: 0, step: .01 },
+        { name: "facing", label: "Facing", initial: flat?.facing, maxLength: 40 },
+        { name: "status", label: "Availability", initial: flat?.status ?? "available", options: [
+          { value: "available", label: "Available" }, { value: "reserved", label: "Reserved" },
+          { value: "sold", label: "Sold" }, { value: "blocked", label: "Blocked" },
+          { value: "not_released", label: "Not released" },
+        ] },
+        { name: "floor_plan_url", label: "Plan URL or website path", initial: flat?.floor_plan_url, maxLength: 2000 },
+        { name: "admin_notes", label: "Private notes", initial: flat?.admin_notes, maxLength: 500 },
+      ],
+      save: values => upsertFlat({ data: { ...scope, ...values, id: flat?.id, floor_id: floorId } }),
+    });
+  }
+
+  function addFlatBatch(floorId: string) {
+    setEditor({
+      title: "Add multiple flats",
+      description: "Creates up to 50 flats on the selected floor. A duplicate code stops the batch.",
+      fields: [
+        { name: "prefix", label: "Flat code prefix", required: true, maxLength: 20 },
+        { name: "start", label: "Starting number", type: "number", min: 1, initial: 1, required: true },
+        { name: "count", label: "Number of flats", type: "number", min: 1, max: 50, initial: 6, required: true },
+      ],
+      save: values => bulkFlats({ data: { ...scope, ...values, floor_id: floorId } }),
+    });
+  }
+
+
+  return (
+    <div className="border-t border-border bg-background/40 p-4">
+      {removing && <ConfirmDialog open onOpenChange={open => { if (!open) setRemoving(null); }} destructive
+        title={removing.kind === "floor" ? "Delete this floor?" : "Delete this flat?"}
+        description={removing.kind === "floor" ? "All flats on this floor will also be deleted." : "The flat will be removed from inventory."}
+        confirmLabel="Delete" successMessage="Inventory updated" onConfirm={async () => {
+          await (removing.kind === "floor" ? deleteFloor : deleteFlat)({ data: { id: removing.id } });
+          void onSaved();
+        }} />}
+      {editor && <StructureForm editor={editor} onClose={() => setEditor(null)} onSaved={() => {
+        setEditor(null);
+        toast.success("Inventory saved");
+        void onSaved();
+      }} />}
+      <TowerLayoutReview buildingId={buildingId} />
+      <div className="mb-3 flex items-center justify-between">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Floors</h4>
+        <button type="button" onClick={() => editFloor()} disabled={isLoading || isError} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-foreground">
+          <Plus size={12} /> Add Floor
+        </button>
+      </div>
+
+      {isLoading ? <p role="status">Loading floors…</p> : isError ? (
+        <p role="alert">Inventory could not be loaded. <button type="button" onClick={() => void refetch()} className="font-semibold text-primary">Try again</button></p>
+      ) : floors.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-xs text-muted-foreground">
+          No floors yet.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {floors.map((f) => {
+            const fFlats = flats.filter((fl) => fl.floor_id === f.id);
+            return (
+              <div key={f.id} className="rounded-2xl border border-border bg-surface p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Layers size={14} className="text-muted-foreground" />
+                    <span className="text-sm font-bold text-foreground">Floor {f.number}</span>
+                    {f.name && <span className="text-xs text-muted-foreground">· {f.name}</span>}
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">{fFlats.length} flats</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => editFlat(f.id)} className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                      <Plus size={10} /> Flat
+                    </button>
+                    <button onClick={() => addFlatBatch(f.id)} className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                      <Plus size={10} /> Bulk
+                    </button>
+                    <button type="button" aria-label={`Edit floor ${f.number}`} onClick={() => editFloor(f)} className="grid min-h-9 min-w-9 place-items-center rounded-full border border-border text-muted-foreground"><Pencil size={12} /></button>
+                    <button type="button" aria-label={`Delete floor ${f.number}`} onClick={() => setRemoving({ kind: "floor", id: f.id })} className="grid h-6 w-6 place-items-center rounded-full border border-border text-muted-foreground hover:text-rose-500">
+                      <Trash2 size={10} />
+                    </button>
+                  </div>
+                </div>
+
+                {fFlats.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                    {fFlats.map((fl) => (
+                      <div key={fl.id} className={`group relative rounded-xl border p-2 text-xs ${STATUS_STYLES[fl.status] ?? "border-border bg-background"}`}>
+                        <div className="flex items-center justify-between">
+                          <button type="button" onClick={() => editFlat(f.id, fl)} aria-label={`Edit flat ${fl.unit_code}`} className="min-h-8 font-bold text-primary underline underline-offset-2">{fl.unit_code}</button>
+                          <button type="button" aria-label={`Delete flat ${fl.unit_code}`} onClick={() => setRemoving({ kind: "flat", id: fl.id })} className="grid min-h-8 min-w-8 place-items-center rounded-full hover:bg-destructive/10">
+                            <Trash2 size={10} className="text-rose-500" />
+                          </button>
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-muted-foreground">
+                          {fl.area_sqft ? `${fl.area_sqft} sqft` : "—"}
+                        </div>
+                        <div className="text-[10px] font-semibold text-foreground">
+                          {fl.price ? formatINR(fl.price) : "—"}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  available: "border-emerald-500/40 bg-emerald-500/10",
+  reserved: "border-amber-500/40 bg-amber-500/10",
+  sold: "border-rose-500/40 bg-rose-500/10",
+  blocked: "border-slate-500/40 bg-slate-500/10",
+  not_released: "border-border bg-muted/30",
+};
+
+/* ==================== INVENTORY (visual grid) ==================== */
+
+const CYCLE: Record<string, "available" | "reserved" | "sold"> = {
+  available: "reserved",
+  reserved: "sold",
+  sold: "available",
+  blocked: "available",
+  not_released: "available",
+};
+
+function InventoryTab({ projectId, slug }: { projectId: string; slug: string }) {
+  const qc = useQueryClient();
+  const invFn = useServerFn(adminGetProjectInventory);
+  const updateFlatStatus = useServerFn(adminUpdateFlatStatus);
+  const { data: inv, isLoading, isError, refetch } = useQuery({
+    queryKey: ["admin", "inv-view", projectId],
+    queryFn: () => invFn({ data: { project_id: projectId } }),
+  });
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  useRealtimeInvalidate(
+    `admin-inv-${projectId}`,
+    ["flats", "projects"],
+    [
+      ["admin", "inv-view", projectId],
+      ["admin", "project-inv", projectId],
+      ["admin", "project", projectId],
+      ["inventory", slug],
+      ["project", "public", slug],
+    ],
+  );
+
+  async function cycleFlat(fl: {
+    id: string; unit_code: string; building_id: string; floor_id: string;
+    bedrooms: number; bathrooms: number; balconies: number;
+    area_sqft: number | null; configuration: string | null; facing: string | null;
+    price: number | null; status: string; floor_plan_url: string | null;
+  }) {
+    if (pendingId) return;
+    const next = CYCLE[fl.status] ?? "available";
+    setPendingId(fl.id);
+    setErr(null);
+
+    // Optimistic: flip the flat in every cached inventory shape immediately.
+    const optimisticKeys: Array<readonly unknown[]> = [
+      ["admin", "inv-view", projectId],
+      ["inventory", slug],
+    ];
+    const snapshots = optimisticKeys.map((k) => [k, qc.getQueryData(k as unknown[])] as const);
+    for (const [k] of snapshots) {
+      qc.setQueryData(k as unknown[], (old: unknown) => {
+        const data = old as { flats?: Array<{ id: string; status: string }> } | undefined;
+        if (!data?.flats) return old;
+        return { ...data, flats: data.flats.map((f) => (f.id === fl.id ? { ...f, status: next } : f)) };
+      });
+    }
+
+    try {
+      await updateFlatStatus({ data: { flat_id: fl.id, status: next } });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["admin", "inv-view", projectId] }),
+        qc.invalidateQueries({ queryKey: ["admin", "project-inv", projectId] }),
+        qc.invalidateQueries({ queryKey: ["admin", "project", projectId] }),
+        refreshPublicProjects(qc),
+        qc.invalidateQueries({ queryKey: ["admin", "flat-audit", projectId] }),
+      ]);
+    } catch (e) {
+      // Roll back optimistic writes on failure.
+      for (const [k, snap] of snapshots) qc.setQueryData(k as unknown[], snap);
+      setErr(friendlyError(e, "Couldn't update this unit. Please try again."));
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  if (isLoading) return <div className="h-40 animate-pulse rounded-3xl bg-muted/40" />;
+  if (!inv) {
+    return (
+      <div className="glass-card rounded-3xl p-6 text-center">
+        <p role={isError ? "alert" : undefined}>Inventory could not be loaded.</p>
+        <button type="button" onClick={() => void refetch()} className="mt-2 min-h-11 font-semibold text-primary">Try again</button>
+      </div>
+    );
+  }
+
+  const total = inv.flats.length;
+  const counts = {
+    available: inv.flats.filter((f) => f.status === "available").length,
+    reserved: inv.flats.filter((f) => f.status === "reserved").length,
+    sold: inv.flats.filter((f) => f.status === "sold").length,
+    blocked: inv.flats.filter((f) => f.status === "blocked").length,
+    not_released: inv.flats.filter((f) => f.status === "not_released").length,
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="glass-card flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3 text-xs text-muted-foreground">
+        <span className="font-semibold text-foreground">Click any flat to cycle its status:</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Available</span>
+        <span>→</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-amber-500" /> Reserved</span>
+        <span>→</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-rose-500" /> Sold</span>
+        <span>→ Available</span>
+      </div>
+
+      {err && (
+        <div className="rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-700">
+          {err}
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <StatChip label="Total" value={total} tone="primary" />
+        <StatChip label="Available" value={counts.available} tone="emerald" />
+        <StatChip label="Reserved" value={counts.reserved} tone="amber" />
+        <StatChip label="Sold" value={counts.sold} tone="rose" />
+        <StatChip label="Other" value={counts.blocked + counts.not_released} tone="slate" />
+      </div>
+
+      {inv.buildings.map((b) => {
+        const bFloors = inv.floors.filter((f) => f.building_id === b.id).sort((a, c) => a.number - c.number);
+        return (
+          <div key={b.id} className="rounded-3xl border border-border bg-surface p-5 shadow-[var(--shadow-soft)]">
+            <div className="mb-4 flex items-center gap-2">
+              <Building2 size={16} className="text-primary" />
+              <h3 className="text-base font-bold text-foreground">{b.name}</h3>
+              <span className="text-xs text-muted-foreground">· {b.code}</span>
+            </div>
+            <div className="space-y-3">
+              {bFloors.map((f) => {
+                const fFlats = inv.flats.filter((fl) => fl.floor_id === f.id);
+                return (
+                  <div key={f.id}>
+                    <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                      <Layers size={12} /> Floor {f.number}{f.name ? ` · ${f.name}` : ""}
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
+                      {fFlats.map((fl) => {
+                        const isPending = pendingId === fl.id;
+                        const nextLabel = CYCLE[fl.status] ?? "available";
+                        return (
+                          <button
+                            key={fl.id}
+                            type="button"
+                            onClick={() => cycleFlat(fl)}
+                            disabled={isPending}
+                            title={`${fl.unit_code} · ${fl.status} → click to set ${nextLabel}`}
+                            className={`group relative rounded-lg border p-1.5 text-center transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 ${STATUS_STYLES[fl.status] ?? "border-border"}`}
+                          >
+                            <div className="text-[11px] font-bold text-foreground">{fl.unit_code}</div>
+                            <div className="text-[9px] text-muted-foreground">
+                              {isPending ? "Saving…" : fl.status}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      <FlatStatusAuditPanel projectId={projectId} />
+    </div>
+  );
+}
+
+function FlatStatusAuditPanel({ projectId }: { projectId: string }) {
+  const listFn = useServerFn(adminListFlatStatusAudit);
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "flat-audit", projectId],
+    queryFn: () => listFn({ data: { project_id: projectId, limit: 50 } }),
+  });
+  const entries = data?.entries ?? [];
+
+  const fmt = (iso: string) => {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  };
+
+  return (
+    <div className="rounded-3xl border border-border bg-surface p-5 shadow-[var(--shadow-soft)]">
+      <div className="mb-3 flex items-center gap-2">
+        <FileText size={16} className="text-primary" />
+        <h3 className="text-base font-bold text-foreground">Flat status audit log</h3>
+        <span className="text-xs text-muted-foreground">· last 50 changes</span>
+      </div>
+      {isLoading ? (
+        <div className="h-24 animate-pulse rounded-2xl bg-muted/40" />
+      ) : entries.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No status changes yet.</p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {entries.map((e) => (
+            <li key={e.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 text-sm">
+              <span className="rounded-md bg-primary-soft px-2 py-0.5 text-[11px] font-bold text-primary">
+                {e.unit_code}
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs">
+                <span className={`rounded-full border px-2 py-0.5 font-semibold ${STATUS_STYLES[e.from_status ?? ""] ?? "border-border"}`}>
+                  {e.from_status ?? "—"}
+                </span>
+                <span className="text-muted-foreground">→</span>
+                <span className={`rounded-full border px-2 py-0.5 font-semibold ${STATUS_STYLES[e.to_status ?? ""] ?? "border-border"}`}>
+                  {e.to_status ?? "—"}
+                </span>
+              </span>
+              <span className="ml-auto text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">{e.actor_name ?? "System"}</span>
+                {" · "}
+                {fmt(e.created_at)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+
+function StatChip({ label, value, tone }: { label: string; value: number; tone: "primary" | "emerald" | "amber" | "rose" | "slate" }) {
+  const tones: Record<string, string> = {
+    primary: "bg-primary-soft text-primary",
+    emerald: "bg-emerald-500/15 text-emerald-700",
+    amber: "bg-amber-500/15 text-amber-700",
+    rose: "bg-rose-500/15 text-rose-700",
+    slate: "bg-slate-500/15 text-slate-700",
+  };
+  return (
+    <div className={`rounded-2xl px-4 py-3 ${tones[tone]}`}>
+      <div className="text-xs font-semibold uppercase tracking-wider opacity-80">{label}</div>
+      <div className="mt-1 text-2xl font-extrabold">{value}</div>
+    </div>
+  );
+}
+
+/* ==================== MEDIA ==================== */
+
+function MediaTab({ project, onSaved }: { project: Record<string, unknown>; onSaved: () => void }) {
+  const { role: sessionRole } = useSession();
+  const role = (sessionRole ?? "guest") as Role;
+  const mayEditMedia = canEdit(role, "project.media");
+  const mayEdit3D = canEdit(role, "project.3d_model");
+
+  const upsert = useServerFn(adminUpsertProject);
+  const [saving, setSaving] = useState(false);
+  const [ok, setOk] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const p = project as Record<string, string | null | unknown>;
+
+  const initialGallery: string[] = Array.isArray(p.gallery)
+    ? (p.gallery as unknown[]).filter((v): v is string => typeof v === "string")
+    : [];
+
+  const projectId = (project as { id: string }).id;
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!mayEditMedia && !mayEdit3D) return;
+    setError(null); setOk(false); setSaving(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const raw = Object.fromEntries(fd.entries());
+      await upsert({ data: {
+        id: projectId,
+        ...raw,
+      } as never });
+      setOk(true);
+      onSaved();
+    } catch (err: unknown) {
+      setError(friendlyError(err, "Couldn't save these changes. Please try again."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-6">
+      <Section title="Cover Media">
+        <div className="grid gap-4 md:grid-cols-2">
+          <ImageUploadField label="Thumbnail" name="thumbnail_url" value={p.thumbnail_url as string | null} folder={`projects/${projectId}/thumb`} disabled={!mayEditMedia} />
+          <ImageUploadField label="Cover" name="cover_url" value={p.cover_url as string | null} folder={`projects/${projectId}/cover`} disabled={!mayEditMedia} />
+          <ImageUploadField label="Hero Banner" name="hero_banner_url" value={p.hero_banner_url as string | null} folder={`projects/${projectId}/hero`} disabled={!mayEditMedia} />
+          <ImageUploadField label="Logo" name="logo_url" value={p.logo_url as string | null} folder={`projects/${projectId}/logo`} disabled={!mayEditMedia} />
+        </div>
+      </Section>
+
+      <Section title="Project Gallery">
+        <ImageGalleryUploader
+          name="gallery"
+          value={initialGallery}
+          folder={`projects/${projectId}/gallery`}
+          max={12}
+          disabled={!mayEditMedia}
+        />
+      </Section>
+
+      <Section title="Videos (YouTube / Vimeo / MP4 links)">
+        <VideoUrlList
+          name="videos"
+          initial={
+            Array.isArray(p.videos)
+              ? (p.videos as unknown[]).filter((v): v is string => typeof v === "string")
+              : []
+          }
+          disabled={!mayEditMedia}
+        />
+      </Section>
+
+
+      <Section title="3D Model & Immersive Media">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Model3DUploadField
+            label="3D Tour / Model"
+            name="three_d_tour_url"
+            value={p.three_d_tour_url as string | null}
+            folder={`projects/${projectId}/models`}
+            disabled={!mayEdit3D}
+          />
+          <label className="md:col-span-2 block">
+            <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">Virtual Walkthrough (YouTube / Vimeo)</span>
+            <input
+              name="virtual_walkthrough_url"
+              type="url"
+              defaultValue={(p.virtual_walkthrough_url as string) ?? ""}
+              placeholder="https://youtube.com/…"
+              disabled={!mayEdit3D}
+              className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+            />
+          </label>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Upload a <code>.glb</code>/<code>.gltf</code> file (≤ 40 MB) or paste a Matterport / Sketchfab / YouTube URL. Broken previews show an inline fallback.
+        </p>
+      </Section>
+
+      {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-700">{error}</div>}
+      {ok && <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-700">Saved.</div>}
+      {!mayEditMedia && !mayEdit3D && (
+        <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-700">
+          Your role can view media but not modify it.
+        </div>
+      )}
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={saving || (!mayEditMedia && !mayEdit3D)}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] disabled:opacity-60"
+        >
+          <Save size={14} /> {saving ? "Saving…" : "Save Media"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+
+/* ==================== CONTENT / SEO ==================== */
+
+function ContentTab({ project, onSaved }: { project: Record<string, unknown>; onSaved: () => void }) {
+  const upsert = useServerFn(adminUpsertProject);
+  const [saving, setSaving] = useState(false);
+  const [ok, setOk] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const p = project as Record<string, string | null>;
+  const pShree = project.slug === P_SHREE_SLUG ? getPShreeContent(project.extra) : null;
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setOk(false);
+    setSaving(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const raw: Record<string, unknown> = Object.fromEntries(fd.entries());
+      if (pShree) {
+        const value = (key: string) => String(fd.get(key) ?? "");
+        raw.extra = { p_shree: pShreeContentSchema.parse({
+          highlights: value("p_shree_highlights").split(/\r?\n/).map(line => line.trim()).filter(Boolean),
+          areaSchedule: value("p_shree_area_schedule"),
+          renderings: value("p_shree_renderings"),
+          availabilityNote: value("p_shree_availability_note"),
+          towers: Object.fromEntries(pShree.towers.map(tower => [tower.code, {
+            name: value(`p_shree_tower_${tower.code}_name`),
+            image: value(`p_shree_tower_${tower.code}_image`),
+            plan: value(`p_shree_tower_${tower.code}_plan`),
+          }])),
+        }) };
+      }
+      await upsert({ data: {
+        id: project.id,
+        ...raw,
+      } as never });
+      setOk(true);
+      onSaved();
+    } catch (err: unknown) {
+      setError(friendlyError(err, "Couldn't save these changes. Please try again."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-6">
+      <Section title="Description">
+        <div className="grid gap-4">
+          <Field label="Short Description" name="short_description" defaultValue={p.short_description ?? ""} maxLength={240} />
+          <TextAreaField label="Full Description" name="description" defaultValue={p.description ?? ""} rows={6} maxLength={4000} />
+          <TextAreaField label="Amenities (one per line)" name="amenities"
+            defaultValue={Array.isArray(project.amenities) ? project.amenities.join("\n") : ""} rows={5} />
+        </div>
+      </Section>
+      {pShree && (
+        <Section title="P Shree tower plans and availability">
+          <div className="grid gap-4">
+            <TextAreaField label="Tower image highlights (up to 3 lines)" name="p_shree_highlights" defaultValue={pShree.highlights.join("\n")} rows={3} />
+            <Field label="Availability note" name="p_shree_availability_note" defaultValue={pShree.availabilityNote} maxLength={300} />
+            <Field label="Area schedule PDF URL or path" name="p_shree_area_schedule" defaultValue={pShree.areaSchedule ?? ""} />
+            <Field label="Architectural renderings PDF URL or path" name="p_shree_renderings" defaultValue={pShree.renderings ?? ""} />
+            {pShree.towers.map(tower => (
+              <fieldset key={tower.code} className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-3">
+                <legend className="px-1 text-sm font-semibold">Tower {tower.code}</legend>
+                <Field label="Plan tab name" name={`p_shree_tower_${tower.code}_name`} defaultValue={tower.name} maxLength={40} />
+                <Field label="Plan image URL or path" name={`p_shree_tower_${tower.code}_image`} defaultValue={tower.image ?? ""} />
+                <Field label="Plan PDF URL or path" name={`p_shree_tower_${tower.code}_plan`} defaultValue={tower.plan ?? ""} />
+              </fieldset>
+            ))}
+          </div>
+        </Section>
+      )}
+      <Section title="SEO Metadata">
+        <div className="grid gap-4">
+          <Field label="SEO Title" name="seo_title" defaultValue={p.seo_title ?? ""} maxLength={160} />
+          <TextAreaField label="SEO Description" name="seo_description" defaultValue={p.seo_description ?? ""} rows={3} maxLength={320} />
+        </div>
+      </Section>
+
+      {error && <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-700">{error}</div>}
+      {ok && <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-700">Saved.</div>}
+
+      <div className="flex justify-end">
+        <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] disabled:opacity-60">
+          <Save size={14} /> {saving ? "Saving…" : "Save Content"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/* ==================== SHARED FIELDS ==================== */
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-[var(--shadow-soft)]">
+      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-muted-foreground">{title}</h2>
+      {children}
+    </div>
+  );
+}
+function Field({ label, name, ...rest }: { label: string; name: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">{label}</span>
+      <input name={name} {...rest} className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" />
+    </label>
+  );
+}
+function TextAreaField({ label, name, ...rest }: { label: string; name: string } & React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">{label}</span>
+      <textarea name={name} {...rest} className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" />
+    </label>
+  );
+}
+function SelectField({ label, name, defaultValue, options }: { label: string; name: string; defaultValue?: string; options: Array<{ value: string; label: string }> }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">{label}</span>
+      <select name={name} defaultValue={defaultValue} className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20">
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </label>
+  );
+}
+
+function VideoUrlList({
+  name,
+  initial,
+  disabled,
+}: {
+  name: string;
+  initial: string[];
+  disabled?: boolean;
+}) {
+  const [urls, setUrls] = useState<string[]>(initial);
+  const [draft, setDraft] = useState("");
+
+  function add() {
+    const v = draft.trim();
+    if (!v) return;
+    try {
+      new URL(v);
+    } catch {
+      alert("Enter a valid https:// URL");
+      return;
+    }
+    if (urls.includes(v)) return;
+    setUrls([...urls, v]);
+    setDraft("");
+  }
+
+  return (
+    <div>
+      <input type="hidden" name={name} value={JSON.stringify(urls)} />
+      <div className="flex flex-wrap items-stretch gap-2">
+        <input
+          type="url"
+          placeholder="https://youtube.com/watch?v=…"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          disabled={disabled}
+          className="min-w-[240px] flex-1 rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+        />
+        <button
+          type="button"
+          onClick={add}
+          disabled={disabled || !draft.trim()}
+          className="inline-flex items-center gap-1.5 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+        >
+          <Plus size={14} /> Add
+        </button>
+      </div>
+      {urls.length === 0 ? (
+        <p className="mt-3 text-xs text-muted-foreground">
+          No videos yet. Paste a YouTube, Vimeo, or direct .mp4 URL.
+        </p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {urls.map((u, i) => (
+            <li
+              key={`${u}-${i}`}
+              className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2"
+            >
+              <span className="truncate text-xs text-foreground">{u}</span>
+              {!disabled && (
+                <button
+                  type="button"
+                  onClick={() => setUrls(urls.filter((_, idx) => idx !== i))}
+                  className="ml-auto grid h-6 w-6 place-items-center rounded-full bg-muted text-muted-foreground hover:bg-rose-500/20 hover:text-rose-600"
+                  aria-label="Remove"
+                >
+                  <Trash2 size={12} />
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+

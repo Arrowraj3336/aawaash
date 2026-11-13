@@ -1,0 +1,30 @@
+- [x] Add editable project Flats content with three swipeable unit cards.
+- [x] Reorder project detail sections and redesign live availability.
+- [x] Add admin project editor controls and persistence for Flats content.
+- [x] Add authenticated homepage edit and image persistence E2E coverage.
+- [x] Run typecheck, production build smoke test, and focused public verification.
+- [ ] Run authenticated homepage, Flats upload/save, and database write E2E coverage after an active admin signs in to the preview.
+- [x] Apply the white and Fern green theme across public, dashboard, and admin surfaces.
+- [x] Remove member-per-team limits (50+ members supported).
+- [x] Verify large member lists, pagination, and counts after the unlimited-member update.
+- [x] Replace the homepage hero building with a transparent photoreal Savitri Enclave façade.
+- [x] Prevent project tab saves from resetting fields owned by other tabs.
+- [x] Remove the non-persisting walkthrough poster upload control.
+- [ ] Complete authenticated admin save/upload/public persistence checks after an active admin signs in to the preview.
+- [x] Replace placeholder/public inventory reads with authenticated project-ID reads, including draft projects.
+- [ ] Verify floor creation and flat creation end to end; blocked until an admin signs in to the preview.
+- [x] Add tower layout description/text upload and structured AI review without automatic inventory writes.
+- [x] Unlimited Team Leaders with numbered teams (Team 1, 2, 3 …).
+- [x] Apply white and Payne's Gray across public pages, dashboards, and admin; verify public rendering and persisted CMS colors.
+- [x] Review tower layouts for missing floors, duplicate flat numbers, and inconsistent unit counts using AI Gateway; live request and unit tests passed.
+- [x] Replace Payne's Gray with white and dark Fern green across all theme scopes and saved brand colors; public pages verified without errors.
+- [x] Apply white, dark matte plum and dark olive green theme.
+- [x] Remove the Team Leader cap everywhere: leader creation auto-assigns a fresh numbered team, no team picker (dashboard card, leaders-list dialog, form page).
+- [x] One colour per element: replaced every plum+olive mixed gradient with single-colour fades, solid dark plum buttons, plum browser chrome, and native-app tap/scroll polish.
+- [ ] Verify adding a 4th/5th Team Leader from the admin panel after an active admin signs in to the preview.
+- [x] Replace plum with white + Deep Ink Navy professional theme across public, dashboards, admin, and saved CMS brand colors.
+- [x] New photoreal homepage hero building with better sizing; image bottom flush with section end.
+- [x] Build Savitri Enclave tower inventory (floors 1-4, flats x01/x02) from floor plan, validate missing/duplicate flats, save to admin.
+- [x] Restyle leader/member dashboards for mobile: narrower cards, bigger tap targets, swipeable floor list.
+- [ ] Decide whether flats x03–x05 on each Savitri floor (not on the unit plan; some sold) should stay; awaiting owner.
+- [ ] Check the new dashboard floor swipe while signed in as a leader/member.

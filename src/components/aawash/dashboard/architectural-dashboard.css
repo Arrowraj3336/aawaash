@@ -1,0 +1,249 @@
+.architectural-dashboard.theme-mono {
+  --dash-green: #677a3d;
+  --dash-ink: var(--brand-charcoal-deep);
+  --dash-border: var(--brand-line);
+  --dash-shadow: 0 7px 18px #2628210b, 0 2px 5px #26282106;
+  --primary: #677a3d;
+  --primary-soft: #e8ecdd;
+  --forest: #677a3d;
+  --forest-deep: #32342c;
+  --leaf: #6c7161;
+  --surface-warm: #f5f5f3;
+  --muted-foreground: var(--brand-slate);
+  background: linear-gradient(var(--brand-mist), #fff 680px);
+  color: var(--dash-ink);
+}
+
+.architectural-dashboard [data-testid="dock-content"] {
+  max-width: 1032px;
+  padding: clamp(9px, 2vw, 18px) clamp(12px, 3.6vw, 28px) calc(106px + env(safe-area-inset-bottom));
+}
+
+.architectural-dashboard .eco-welcome-header {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: clamp(4px, 1.5vw, 14px);
+  padding: 5px clamp(6px, 2vw, 16px);
+  margin-inline: 0;
+  border: 1px solid #e1e2e5;
+  border-radius: 999px;
+  background: #fffffff5;
+  box-shadow: var(--dash-shadow);
+}
+
+.architectural-dashboard .eco-welcome-identity { padding: 0; gap: 5px; }
+.architectural-dashboard .eco-welcome-identity > span:last-child { font: 650 clamp(10px, 2.6vw, 16px)/1.2 Inter, sans-serif; }
+.architectural-dashboard .eco-welcome-brand { display: flex; padding-inline-start: clamp(4px, 2vw, 15px); border-left: 1px solid #e0e1e3; }
+.architectural-dashboard .eco-welcome-brand > span { gap: 3px; }
+.architectural-dashboard .eco-welcome-brand > span > span:first-child { width: clamp(22px, 7.4vw, 50px); height: clamp(26px, 8vw, 53px); }
+.architectural-dashboard .eco-welcome-brand > span > span:last-child { color: var(--dash-ink); font-size: clamp(13px, 3.5vw, 25px); }
+.architectural-dashboard .eco-welcome-actions { gap: 0; }
+.architectural-dashboard .eco-welcome-actions > :is(a, button) { min-width: 44px; width: 44px; color: var(--dash-ink); }
+.architectural-dashboard .eco-welcome-actions svg { width: 18px; }
+.architectural-dashboard main { margin-top: 0; }
+
+.arch-dashboard-greeting {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: clamp(107px, 21vw, 155px);
+  margin: 12px 0;
+  overflow: hidden;
+  padding: 15px clamp(14px, 3vw, 24px);
+  border: 1px solid var(--dash-border);
+  border-radius: 16px;
+  background: #e8ecdd;
+}
+.arch-greeting-building {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  bottom: -10px;
+  width: min(43%, 244px);
+  height: auto;
+  opacity: .42;
+  pointer-events: none;
+}
+.arch-greeting-copy { max-width: 77%; }
+.arch-greeting-salutation { display: flex; align-items: center; gap: 8px; color: var(--dash-ink); font: 750 clamp(8px, 2vw, 11px)/1.2 Inter, sans-serif; letter-spacing: .25em; text-transform: uppercase; }
+.arch-greeting-salutation::before { content: ""; width: 21px; height: 4px; border-radius: 99px; background: var(--dash-green); }
+.arch-greeting-copy h1 { margin: 5px 0; font: 570 clamp(30px, 7vw, 49px)/.97 'Fraunces', Georgia, serif; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.arch-greeting-date { display: flex; align-items: center; gap: 8px; font: 500 clamp(10px, 2.65vw, 15px)/1.3 Inter, sans-serif; }
+.arch-greeting-date svg { flex-shrink: 0; }
+
+.arch-rank, .arch-metric { position: relative; isolation: isolate; border: 1px solid var(--dash-border); border-radius: 14px; background: #fff; box-shadow: var(--dash-shadow); }
+.arch-rank {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: clamp(10px, 2.4vw, 18px);
+  background: radial-gradient(ellipse at 63% 58%, #fff 36%, #fff0 77%), linear-gradient(155deg, #fff 54%, #e8ecdd 83%, #fff 95%);
+}
+.arch-rank::before { content: ""; position: absolute; z-index: -1; inset: 0 auto auto 0; width: clamp(29px, 7vw, 52px); height: clamp(31px, 8vw, 59px); background: var(--dash-green); clip-path: polygon(0 0, 100% 0, 67% 12%, 42% 34%, 20% 62%, 0 100%); }
+.arch-rank-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1px; padding-inline-start: clamp(8px, 2vw, 14px); }
+.arch-rank-heading h2 { font: 620 clamp(16px, 4.65vw, 32px)/1.05 'Fraunces', Georgia, serif; letter-spacing: -.025em; }
+.arch-rank-heading button { display: grid; flex: none; width: 28px; height: 28px; place-items: center; border-radius: 50%; }
+.arch-rank-heading button:hover { background: #e8ecdd; }
+.arch-rank-position { display: flex; align-items: center; justify-content: center; gap: 3px; color: var(--dash-green); text-align: center; }
+.arch-rank-position svg { width: clamp(10px, 2.4vw, 18px); height: auto; flex-shrink: 0; }
+.arch-rank-position svg:last-child { transform: scaleX(-1); }
+.arch-rank-position strong { font: 570 clamp(17px, 5vw, 33px)/1 'Fraunces', Georgia, serif; }
+.arch-rank-position small { display: block; margin-top: 2px; color: #51535b; font: 550 9px/1.15 Inter, sans-serif; }
+
+.arch-dashboard-metrics, .arch-dashboard-quick { display: grid; gap: clamp(6px, 1.9vw, 12px); }
+.arch-dashboard-metrics { grid-template-rows: repeat(3, minmax(0, 1fr)); }
+.arch-dashboard-quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.arch-metric { display: flex; min-width: 0; flex-direction: column; justify-content: center; gap: 3px; padding: clamp(7px, 2.1vw, 17px) clamp(8px, 2.4vw, 18px); overflow: hidden; font: 550 clamp(10px, 2.7vw, 15px)/1.15 Inter, sans-serif; }
+.arch-dashboard-metrics .arch-metric { border-left: 2px solid #27343b; }
+.arch-metric:hover { background: #f8f8f7; }
+.arch-metric strong { font: 750 clamp(14px, 4vw, 30px)/1.12 Inter, sans-serif; overflow-wrap: anywhere; letter-spacing: -.04em; }
+.arch-metric-icon { color: var(--dash-green); }
+.arch-metric-icon svg { display: block; width: clamp(16px, 5vw, 27px); height: auto; }
+
+.arch-search { margin: clamp(11px, 3vw, 20px) 0; }
+.arch-search-bar { display: flex; align-items: center; gap: 8px; padding: 4px 4px 4px 12px; border: 1px solid var(--dash-border); border-radius: 999px; background: #fff; box-shadow: var(--dash-shadow); }
+.arch-search-bar > svg { flex: none; }
+.arch-search-bar input { min-width: 0; flex: 1; min-height: 37px; background: none; font: 500 clamp(10px, 2.7vw, 14px)/1.2 Inter, sans-serif; }
+.arch-search-bar input::placeholder { color: #51535b; }
+.arch-search-bar button { display: grid; flex: none; width: 44px; height: 36px; place-items: center; border-radius: 999px; background: var(--dash-green); color: #fff; }
+.arch-search-message { padding: 6px 12px; color: #51535b; font-size: 12px; }
+.arch-search-results { margin-top: 5px; padding: 5px 10px; border: 1px solid var(--dash-border); border-radius: 14px; background: #fff; font-size: 13px; }
+.arch-search-results p { padding: 7px; }
+.arch-search-results a { display: flex; justify-content: space-between; align-items: center; gap: 5px; min-height: 38px; padding-inline: 7px; }
+.arch-search-results li + li { border-top: 1px solid var(--dash-border); }
+
+.architectural-dashboard :is(.arch-metric,.arch-rank button,.arch-search a,.arch-search button,.arch-search input):focus-visible { outline: 2px solid #53564b; outline-offset: 2px; }
+
+@media (max-width: 345px) {
+  .architectural-dashboard .eco-welcome-actions > :is(a, button) { min-width: 40px; width: 40px; }
+  .arch-rank-heading { padding-inline-start: 7px; }
+}
+
+.architectural-dashboard .eco-data-panel {
+  border: 1px solid var(--dash-border);
+  border-radius: 15px;
+  box-shadow: var(--dash-shadow);
+}
+.architectural-dashboard .eco-welcome-header { border-radius: 15px; }
+.arch-metric { min-height: 62px; }
+.arch-metric strong { font-variant-numeric: tabular-nums; }
+.arch-dashboard-metrics .arch-metric { border-left-color: var(--dash-green); }
+.arch-dashboard-quick .arch-metric { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: start; column-gap: 8px; }
+.arch-dashboard-quick .arch-metric strong { margin-left: auto; }
+@media (min-width: 620px) {
+  .arch-dashboard-metrics { grid-template: 1fr / repeat(3, minmax(0, 1fr)); }
+  .arch-dashboard-metrics .arch-metric { align-content: end; }
+  .arch-dashboard-quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 360px) {
+  .arch-greeting-copy { max-width: 87%; }
+  .arch-dashboard-quick .arch-metric strong { margin-left: 0; width: 100%; }
+}
+
+/* Mobile dashboard and account surfaces */
+.architectural-dashboard.theme-mono {
+  --dash-green: #4a503f;
+  --dash-ink: var(--brand-charcoal-deep);
+  --dash-border: var(--brand-line);
+  --primary: #4a503f;
+  --primary-soft: #e8ecdd;
+  background: linear-gradient(160deg,#fff 45%,var(--brand-mist));
+}
+.architectural-dashboard [data-testid="dock-content"] { max-width: 840px; padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+.architectural-dashboard .eco-welcome-header { margin-bottom: 6px; border-color: transparent; border-radius: 12px; box-shadow: none; background: #ffffffef; }
+.architectural-dashboard .eco-welcome-brand > span > span:last-child { font-weight: 620; }
+.arch-dashboard-greeting { padding: clamp(18px,5vw,46px) 4px; margin: 0 0 8px; min-height: clamp(112px,30vw,223px); border: 0; background: transparent; }
+.arch-greeting-building { width: 77%; max-width: 525px; right: -9%; bottom: -21%; color: #707665; opacity: .22; }
+.arch-greeting-salutation::before { display: none; }
+.arch-greeting-salutation::after { content: ""; width: 28px; height: 1px; background: #4a503f; }
+.arch-greeting-copy h1 { margin: .24em 0 .12em; color: var(--brand-charcoal-deep); font: 720 clamp(2.4rem,10vw,5rem)/.97 Inter,sans-serif; letter-spacing: -.06em; }
+.arch-greeting-description { color: var(--brand-slate); font-size: clamp(.75rem,2.8vw,1.06rem); }
+.arch-rank { display: grid; grid-template-columns: 43% 57%; align-items: center; gap: 0; min-height: 0; margin: 0; padding: clamp(10px,2.8vw,22px); border-color: #dadbd7; border-top-color: #7a806f; border-bottom-color: #767b6b; border-radius: 19px; box-shadow: none; }
+.arch-rank::before, .arch-rank::after { display: none; }
+.arch-rank-result { display: grid; justify-items: center; padding-right: .3rem; }
+.arch-rank-heading { display: flex; align-items: center; gap: 4px; margin: 0 0 4px; }
+.arch-rank-heading h2 { font: 670 clamp(.79rem,3.5vw,1.14rem)/1.14 Inter,sans-serif; }
+.arch-rank-heading button { display: grid; place-items: center; width: 28px; height: 28px; }
+.arch-rank-position { justify-content: center; width: auto; }
+.arch-rank-position strong { font: 620 clamp(1.8rem,7.5vw,3.5rem)/.98 "Fraunces",Georgia,serif; }
+.arch-rank-position small { color: #4c4f46; font-size: .7rem; }
+.arch-rank-position svg { width: clamp(12px,3.5vw,23px); }
+.arch-rank-progress { display: grid; gap: 4px; padding-inline: clamp(8px,3vw,25px) 0; border-left: 1px solid #dfe0e3; font-size: clamp(.73rem,2.9vw,1.08rem); font-weight: 600; }
+.arch-rank-progress strong { color: #484e3a; font-size: clamp(1.13rem,4.5vw,1.85rem); }
+.arch-rank-progress progress { display: block; width: 100%; height: 7px; overflow: hidden; border: 0; border-radius: 8px; background: #e8ecdd; accent-color: #5c624e; }
+.arch-rank-progress progress::-webkit-progress-bar { background: #e8ecdd; }
+.arch-rank-progress progress::-webkit-progress-value { border-radius: 8px; background: linear-gradient(90deg,#424737,#808772); }
+.arch-dashboard-metrics, .arch-dashboard-quick, .arch-dashboard-highlights { display: grid; grid-template: auto / repeat(4,minmax(0,1fr)); gap: 0; margin-top: clamp(10px,4vw,25px); }
+.arch-dashboard-metrics .arch-metric, .arch-dashboard-quick .arch-metric {
+  display: grid; justify-items: center; align-content: start; gap: 4px; min-height: 0; padding: .65rem .15rem; border: 0;
+  border-radius: 0; background: transparent; box-shadow: none; text-align: center; font: 530 clamp(.57rem,2.48vw,.88rem)/1.18 Inter,sans-serif;
+}
+.arch-dashboard-metrics .arch-metric + .arch-metric, .arch-dashboard-quick .arch-metric + .arch-metric { border-left: 1px solid #e0e1e3; }
+.arch-dashboard-metrics .arch-metric strong, .arch-dashboard-quick .arch-metric strong { width: 100%; margin: 0; font: 650 clamp(.92rem,3.8vw,1.65rem)/1.12 Inter,sans-serif; overflow-wrap: anywhere; }
+.arch-metric-icon { color: #4c5241; }
+.arch-metric-icon svg { width: clamp(17px,4.8vw,27px); height: auto; stroke-width: 1.65; }
+.arch-dashboard-quick { padding: 5px; border: 1px solid var(--dash-border); border-radius: 17px; background: #fff; box-shadow: var(--dash-shadow); }
+.arch-dashboard-quick .arch-metric-icon { display: grid; place-items: center; width: 34px; aspect-ratio: 1; border-radius: 11px; background: #e8ecdd; }
+.arch-dashboard-highlights { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.arch-dashboard-highlights .arch-metric { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 2px 8px; align-items: center; padding: clamp(8px,2vw,16px); border-color: #9698a1; box-shadow: none; }
+.arch-dashboard-highlights .arch-metric-icon { grid-row: span 2; display: grid; place-items: center; width: clamp(28px,7vw,43px); aspect-ratio: 1; border-radius: 9px; background: #e8ecdd; }
+.arch-dashboard-highlights .arch-metric strong { font-size: clamp(.9rem,4vw,1.6rem); }
+.arch-explore {
+  position: relative; isolation: isolate; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 9px;
+  min-height: clamp(75px,16vw,132px); margin: clamp(10px,3vw,21px) 0; padding: 10px clamp(9px,3vw,21px); overflow: hidden;
+  border-radius: 17px; color: #fff; background: linear-gradient(105deg,#4c5241 25%,#3c4035 63%,#2b2d2720),url("/images/home/residence-balconies.webp") right center/65% auto no-repeat #46493e;
+}
+.arch-explore > svg { width: clamp(20px,5vw,34px); height: auto; }
+.arch-explore > svg:last-child { width: 31px; padding: 6px; border-radius: 50%; color: #34382d; background: #e8ecdd; }
+.arch-explore span { display: grid; gap: 3px; }
+.arch-explore strong { font-size: clamp(.81rem,3.55vw,1.48rem); }
+.arch-explore small { font-size: clamp(.62rem,2.37vw,.87rem); }
+.arch-overview,.arch-trend,.arch-wallet-section,.arch-subpage { margin-top: clamp(16px,4vw,32px); }
+.arch-page-heading { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0 5px 12px; margin-bottom: 12px; border-left: 4px solid #656a5a; border-radius: 2px; }
+.arch-page-heading :is(h1,h2) { font: 610 clamp(1.18rem,5vw,2rem)/1.05 "Fraunces",Georgia,serif; letter-spacing: -.035em; }
+.arch-page-heading p { margin-top: 4px; color: #505349; font-size: clamp(.69rem,2.6vw,.93rem); line-height: 1.25; }
+.arch-page-skyline { position: absolute; z-index: -1; right: 1%; bottom: -27%; width: min(50%,300px); color: #6e7364; opacity: .2; pointer-events: none; }
+.arch-page-heading select { border: 1px solid #dfe0dc; border-radius: 99px; background: #fff; padding: .42rem .65rem; font-size: clamp(.64rem,2.3vw,.86rem); }
+.arch-overview { padding: clamp(10px,3.4vw,23px); border: 1px solid var(--dash-border); border-radius: 19px; background: #fff; box-shadow: var(--dash-shadow); }
+.arch-overview-chart { display: grid; grid-template-columns: 40% 60%; align-items: center; }
+.arch-overview-ring { display: grid; place-items: center; width: min(93%,150px); aspect-ratio: 1; margin: auto; border-radius: 50%; }
+.arch-overview-ring > span { display: grid; place-items: center; align-content: center; gap: 3px; width: 82%; aspect-ratio: 1; border-radius: 50%; background: white; }
+.arch-overview-ring svg { width: 22px; color: #4e5440; }
+.arch-overview-ring strong { font: 720 clamp(.9rem,4.6vw,1.62rem)/1 Inter,sans-serif; }
+.arch-overview-ring small { text-align: center; font-size: clamp(.53rem,2.1vw,.75rem); }
+.arch-overview-bars { display: flex; align-items: flex-end; justify-content: space-around; height: clamp(77px,22vw,136px); padding-inline: 5px; border-left: 1px solid var(--dash-border); }
+.arch-overview-bars > div { display: flex; align-items: center; justify-content: flex-end; flex: 1; flex-direction: column; min-width: 0; height: 100%; gap: 3px; font-size: clamp(.49rem,2vw,.75rem); }
+.arch-overview-bars i { width: 64%; min-height: 3px; border-radius: 4px 4px 0 0; background: linear-gradient(#6e7463,#e2e4df); }
+.arch-overview-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 14px; }
+.arch-overview-stats > div { display: grid; justify-items: center; gap: 2px; padding: 2px; text-align: center; font-size: clamp(.61rem,2.4vw,.86rem); }
+.arch-overview-stats > div + div { border-left: 1px solid var(--dash-border); }
+.arch-overview-stats strong { color: #2c2f25; font-size: clamp(.82rem,3.75vw,1.32rem); }
+.arch-overview-stats small { padding: 2px 8px; border-radius: 99px; background: #e8ecdd; }
+.arch-trend > svg { display: block; width: 100%; max-height: 250px; }
+.arch-wallet { display: grid; gap: 9px; }
+.arch-wallet-balance, .arch-wallet-grid > div, .arch-wallet-link {
+  display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--dash-border); border-radius: 15px; background: #fff;
+}
+.arch-wallet-balance { min-height: clamp(64px,17vw,120px); background: linear-gradient(90deg,#fff 39%,#ffffffb8 73%,#ffffff23),url("/images/home/residence-balconies.webp") right center/54% auto no-repeat #fff; }
+.arch-wallet :is(strong,small) { display: block; overflow-wrap: anywhere; }
+.arch-wallet-balance div, .arch-wallet-grid > div > span:last-child { min-width: 0; }
+.arch-wallet-balance strong { font: 740 clamp(1.28rem,5.5vw,2.55rem)/1.09 Inter,sans-serif; }
+.arch-wallet-balance > svg, .arch-wallet-icon { flex: none; display: grid; place-items: center; width: clamp(28px,7.5vw,45px); aspect-ratio: 1; height: auto; padding: 6px; border-radius: 10px; color: #4a503f; background: #e8ecdd; }
+.arch-wallet-icon svg { width: 100%; height: auto; }
+.arch-wallet-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.arch-wallet-grid > div { font-size: clamp(.67rem,2.54vw,.89rem); line-height: 1.2; }
+.arch-wallet-grid strong { margin-top: 3px; font-size: clamp(.83rem,3.4vw,1.4rem); }
+.arch-wallet-action, .arch-wallet-link { display: flex; justify-content: center; align-items: center; gap: 8px; min-height: 44px; border-radius: 99px; font-size: .86rem; font-weight: 650; }
+.arch-wallet-action { color: white; background: linear-gradient(120deg,#4e5441,#33372c); }
+.arch-wallet-action svg, .arch-wallet-link svg { width: 17px; }
+.arch-wallet-link { justify-content: flex-start; }
+.arch-wallet-link svg:last-child { margin-left: auto; }
+.architectural-dashboard :is(a,button,select,input):focus-visible { outline: 2px solid #707662; outline-offset: 2px; }
+.architectural-dashboard .eco-welcome-brand > span > span:first-child { width: clamp(23px,6.5vw,36px); height: clamp(26px,7.2vw,41px); }
+.architectural-dashboard .eco-welcome-brand > span > span:last-child { font-size: clamp(.8rem,3.7vw,1.32rem); }
+
+@media (max-width: 360px) {
+  .arch-wallet-grid > div { padding: 7px; gap: 6px; }
+  .arch-dashboard-highlights .arch-metric { column-gap: 5px; }
+  .arch-search-bar input { font-size: 16px; }
+}

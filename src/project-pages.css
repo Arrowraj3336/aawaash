@@ -1,0 +1,126 @@
+/* Project catalogue */
+.portfolio-page {--primary:#677a3d;--primary-soft:#eeeeed;--gold:#696c76;--foreground:var(--brand-charcoal-deep);--muted-foreground:#777176;--border:#dedfe2;--surface:#ffffff;background:#ffffff;color:var(--brand-charcoal-deep);isolation:isolate;font-family:Inter,sans-serif;}
+.portfolio-page::before {content:'';position:absolute;inset:150px 0 0;z-index:-1;pointer-events:none;background:url('/images/glass-tower.svg') right 700px/380px no-repeat,url('/images/courtyard.svg') left 1800px/420px no-repeat;opacity:.13;}
+.portfolio-page .landing-header {padding:0;background:#ffffffed;backdrop-filter:blur(10px);}
+.portfolio-page .landing-header nav {height:84px;border:0;border-radius:0;background:transparent;box-shadow:none;position:relative;}
+.portfolio-page .landing-header nav > a {position:absolute;left:50%;transform:translateX(-50%);}
+.portfolio-page .landing-header nav > a > span > span:first-child {width:49px;height:58px;overflow:hidden;}
+.portfolio-page .landing-header nav > a img {transform:scale(1.3);}
+.portfolio-page .landing-header nav > a > span > span:last-child {font:400 20px 'Fraunces',Georgia,serif !important;letter-spacing:-.025em !important;color:#677a3d;}
+.portfolio-page .landing-header nav > a > span {gap:3px;}
+.portfolio-page .landing-header nav > ul {display:none;}
+.portfolio-page .nav-actions {width:100%;justify-content:space-between;}
+.portfolio-page .nav-actions > a:not(.nav-search) {display:none;}
+.portfolio-page .nav-search {display:flex;}
+.portfolio-page .nav-actions button[aria-label="Open menu"] {display:grid;width:38px;height:38px;border-radius:50%;background:transparent;box-shadow:none;border-color:#dedfe2;}
+.portfolio-page .nav-actions button svg {width:23px;height:23px;}
+.portfolio-page .glass-card {background:#ffffff;border-color:#dedee1;box-shadow:0 5px 20px #677a3d05;}
+.portfolio-page main {max-width:1100px;padding-top:110px;}
+.portfolio-hero {border:0;border-radius:0;border-bottom:1px solid #dddde0;box-shadow:none !important;background:url('/images/landmark-towers.svg') right center/contain no-repeat !important;padding:26px 0 30px;}
+.portfolio-hero h1 {font:400 39px/1.2 'Fraunces',Georgia,serif;letter-spacing:-.04em;}
+.portfolio-hero p {max-width:440px;font-size:13px;line-height:1.7;}
+.portfolio-hero > .inline-flex {font-size:8px;letter-spacing:.14em;background:#ffffff;padding:0;font-weight:500;color:#6d755d;}
+.portfolio-hero > div.grid {max-width:680px;gap:0;}
+.portfolio-hero > div.grid > div {border:0;border-radius:0;background:#ffffffe8;border-left:1px solid #dddee1;box-shadow:none;padding-left:17px;}
+.portfolio-hero > div.grid > div > div:first-child {font-size:8px;font-weight:400;}
+.portfolio-hero > div.grid > div > div:last-child {font-size:20px;font-weight:400;}
+.portfolio-page main > section.sticky {top:84px;}
+.portfolio-page main > section.sticky > .glass-card {border-radius:14px;box-shadow:0 3px 10px #677a3d06;}
+.portfolio-page input, .portfolio-page select, .portfolio-page main > section.sticky button {font-size:12px;font-weight:400;border-radius:9px;}
+.portfolio-page article {border-radius:16px;box-shadow:0 5px 20px #677a3d08;}
+.portfolio-page article > div:last-child {position:relative;isolation:isolate;background:#ffffff;}
+.portfolio-page article > div:last-child::before {content:'';position:absolute;inset:0 0 0 25%;background:url('/images/card-residence.svg') right bottom/contain no-repeat;opacity:.18;pointer-events:none;z-index:-1;}
+.portfolio-page article .font-extrabold, .portfolio-page article .font-bold {font-weight:500;}
+.portfolio-page article > div:last-child > div:first-child > div > a {font:500 20px/1.3 Inter,sans-serif;letter-spacing:-.04em;}
+.portfolio-page article p {font-size:11px;}
+.portfolio-page article .text-sm {font-size:12px;}
+@media(max-width:639px) {
+  .portfolio-page main {padding-inline:20px;}
+  .portfolio-hero {padding-block:20px 25px;background-size:65% auto !important;background-position:right top !important;}
+  .portfolio-hero h1 {font-size:32px;}
+  .portfolio-hero p {font-size:12px;max-width:260px;background:#ffffffcc;}
+  .portfolio-hero > div.grid {gap:14px 0;margin-top:24px;}
+}
+.portfolio-page .portfolio-hero {isolation:isolate;background:transparent !important;}
+.portfolio-hero::before {content:'';position:absolute;inset:0 0 0 30%;background:url('/images/landmark-towers.svg') right top/contain no-repeat;opacity:.22;pointer-events:none;z-index:-1;}
+.portfolio-page::before, .portfolio-hero::before, .portfolio-page article > div:last-child::before {display:none;}
+.portfolio-page {background:#fff;--surface:#fff;}
+.portfolio-page .portfolio-hero {padding-top:30px;}
+.portfolio-page .portfolio-hero h1 {font:400 37px/1.15 Inter,sans-serif;letter-spacing:-.055em;}
+.portfolio-page .portfolio-hero p {background:none;}
+.portfolio-page .portfolio-hero > div.grid > div {background:none;}
+.portfolio-page article {background:#fff;box-shadow:0 4px 18px #677a3d06;}
+.portfolio-page article > div:last-child {background:#fff;}
+@media(max-width:639px) {
+  .portfolio-page .portfolio-hero h1 {font-size:31px;}
+}
+.portfolio-page .portfolio-hero h1::after {content:'';display:block;width:132px;height:13px;background:url('/images/section-line.svg') left center/contain no-repeat;margin-top:18px;}
+.portfolio-page .portfolio-hero > div.grid {border:1px solid #e1e2e4;border-radius:9px;background:linear-gradient(110deg,#f3f3f2,#fff);padding:15px 0;}
+.portfolio-page article {border-radius:8px 24px 8px 8px;border-bottom:2px solid #949b86;}
+.portfolio-page {--primary:#677a3d;--leaf:#252729;--foreground:var(--brand-charcoal-deep);--muted-foreground:var(--brand-slate);--background:#fff;--surface:#fff;}
+.portfolio-page * {will-change:auto;}
+.portfolio-page .glass-card, .portfolio-page .landing-header nav {backdrop-filter:none;}
+.portfolio-page article img {transition:none;transform:none;scale:1;}
+.portfolio-page main > section.sticky {position:relative;top:auto;}
+.portfolio-page article {animation:none;transition:none;transform:none;}
+body .portfolio-page .landing-header nav {backdrop-filter:none !important;}
+.portfolio-page {
+  background: radial-gradient(ellipse at 90% 7%, var(--brand-mist), #fff 65%);
+}
+.portfolio-page .portfolio-hero { border-bottom-color: #d8dad4; }
+.catalogue-heading {
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 22px 32px;
+  padding: clamp(22px, 5vw, 50px);
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #e0e1e3;
+  border-radius: 22px;
+  background: #e8ecdd;
+}
+.catalogue-heading::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 38%;
+  background: url("/images/glass-tower.svg") right -35px bottom -50px / min(100%, 370px) no-repeat;
+  opacity: .14;
+}
+.catalogue-intro h1 {
+  font: 400 clamp(2.7rem, 6.5vw, 5.2rem)/.95 "Fraunces", Georgia, serif;
+  letter-spacing: -.045em;
+  color: #222326;
+}
+.catalogue-intro h1::before {
+  display: block;
+  width: 32px;
+  height: 2px;
+  margin-bottom: 14px;
+  background: #606556;
+  content: "";
+}
+.catalogue-intro p { max-width: 32ch; margin-top: 12px; color: #4e5057; font-size: .87rem; line-height: 1.5; }
+.catalogue-summary {
+  display: flex;
+  gap: 14px;
+  padding: 11px 14px;
+  border: 1px solid #e0e1e3;
+  border-radius: 11px;
+  background: #fffffff0;
+}
+.catalogue-summary > div { display: flex; flex-direction: column-reverse; gap: 3px; }
+.catalogue-summary > div + div { border-left: 1px solid #dfdfe2; padding-left: 14px; }
+.catalogue-summary dt { color: #4e5057; font-size: .7rem; white-space: nowrap; }
+.catalogue-summary dd { color: #31342b; font-size: 1.15rem; line-height: 1; font-weight: 680; }
+.catalogue-filters > div { border: 1px solid #e0e1e4; border-radius: 15px; }
+.catalogue-filters :is(input, button, select) { font-size: .85rem; }
+.catalogue-result-count { margin: 0 0 10px 2px; color: #4f5158; font-size: .8rem; }
+.portfolio-page .catalogue-results article { border: 1px solid #e0e1e4; border-radius: 18px; overflow: hidden; }
+.portfolio-page .catalogue-results article > div:last-child > div:first-child > div > a {
+  font: 400 clamp(1.45rem, 3vw, 2rem)/1.08 "Fraunces", Georgia, serif;
+  letter-spacing: -.02em;
+}
