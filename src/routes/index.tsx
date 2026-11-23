@@ -1,25 +1,36 @@
+import { SiteFooter } from "@/components/aawash/landing/SiteFooter";
+import { BuildingExplorer } from "@/components/aawash/landing/BuildingExplorer";
 import "@/homepage.css";
+import "@/homepage-future.css";
+import "@/homepage-atelier.css";
+import "@/homepage-reference-hero.css";
+import "@/homepage-reference-sections.css";
+import { HomepageMotion } from "@/components/aawash/landing/HomepageMotion";
 import { HomeSkyline } from "@/components/aawash/landing/HomeSkyline";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicProject } from "@/lib/projects.functions";
-import { startingPrice } from "@/lib/public-catalogue";
-import { formatINR } from "@/components/aawash/dashboard-kit";
+import { ProjectCard } from "@/components/aawash/projects/ProjectCard";
 import { getHomepageContent } from "@/lib/homepage.functions";
 import { DEFAULT_HOMEPAGE, type HomeItem, type HomepageDoc, type HomeSection } from "@/lib/homepage-content";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
   BedDouble,
+  BadgeIndianRupee,
+  DraftingCompass,
+  HousePlug,
+  HandCoins,
+  ChartCandlestick,
+  Tag,
+  ParkingSquare,
   Coins,
   TrendingUp,
   Building2,
-  ShieldCheck,
   Wallet,
   LineChart,
   Smartphone,
-  Users,
   BarChart3,
   Leaf,
   Sparkles,
@@ -36,10 +47,10 @@ import {
   Trees,
   Store,
   Gem,
-  Heart,
   Waves,
   Dumbbell,
-  Coffee,
+  Armchair,
+  Plus,
   Bike,
   ChevronRight,
   X,
@@ -68,36 +79,31 @@ import { BrandMark } from "@/components/aawash/BrandMark";
 import { LandingNav } from "@/components/aawash/landing/LandingNav";
 import { Reveal } from "@/components/aawash/landing/Reveal";
 import { useRealtimeInvalidate } from "@/hooks/useRealtimeInvalidate";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import * as Accordion from "@radix-ui/react-accordion";
 
 export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "Aawash — Premium Real Estate, Reimagined" },
+      { title: "Buy and Sell Flats | Aawaash" },
       {
         name: "description",
         content:
-          "Aawash is a luxury real estate ecosystem — curated residential projects, transparent commissions, and a mobile-first dashboard for your entire team.",
+          "Browse residential flats for sale or enquire about selling your flat directly to Aawaash.",
       },
-      { property: "og:title", content: "Aawash — Premium Real Estate, Reimagined" },
+      { property: "og:title", content: "Buy and Sell Flats | Aawaash" },
       {
         property: "og:description",
         content:
-          "Aawash is a luxury real estate ecosystem — curated residential projects, transparent commissions, and a mobile-first dashboard for your entire team.",
+          "Browse residential flats for sale or enquire about selling your flat directly to Aawaash.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Aawash — Premium Real Estate, Reimagined" },
+      { name: "twitter:title", content: "Buy and Sell Flats | Aawaash" },
       {
         name: "twitter:description",
         content:
-          "Aawash is a luxury real estate ecosystem — curated residential projects, transparent commissions, and a mobile-first dashboard for your entire team.",
+          "Browse residential flats for sale or enquire about selling your flat directly to Aawaash.",
       },
     ],
   }),
@@ -115,6 +121,65 @@ function useSection(id: string): HomeSection {
 
 function items(sec: HomeSection): HomeItem[] {
   return sec.items ?? [];
+}
+
+// The private review deployment shows the proposed wording over the saved CMS document.
+function withBuyingAndSellingDraft(content: HomepageDoc): HomepageDoc {
+  const draft = DEFAULT_HOMEPAGE;
+  return {
+    ...content,
+    header: {
+      ...content.header,
+      copy: {
+        ...content.header?.copy,
+        projects: draft.header.copy!.projects,
+        how: draft.header.copy!.how,
+        contact: draft.header.copy!.contact,
+        explore: draft.header.copy!.explore,
+        mobileExplore: draft.header.copy!.mobileExplore,
+      },
+    },
+    hero: {
+      ...content.hero,
+      eyebrow: draft.hero.eyebrow,
+      title: draft.hero.title,
+      accent: draft.hero.accent,
+      subtitle: draft.hero.subtitle,
+      copy: {
+        ...content.hero?.copy,
+        action: draft.hero.copy!.action,
+        searchLabel: draft.hero.copy!.searchLabel,
+        searchPlaceholder: draft.hero.copy!.searchPlaceholder,
+      },
+    },
+    services: { ...content.services, items: draft.services.items },
+    projects: {
+      ...content.projects,
+      eyebrow: draft.projects.eyebrow,
+      title: draft.projects.title,
+      accent: draft.projects.accent,
+      copy: { ...content.projects?.copy, action: draft.projects.copy!.action },
+    },
+    contact: {
+      ...content.contact,
+      copy: {
+        ...content.contact?.copy,
+        messageLabel: draft.contact.copy!.messageLabel,
+        action: draft.contact.copy!.action,
+        subject: draft.contact.copy!.subject,
+      },
+    },
+    footer: {
+      ...content.footer,
+      subtitle: draft.footer.subtitle,
+      copy: {
+        ...content.footer?.copy,
+        projects: draft.footer.copy!.projects,
+        how: draft.footer.copy!.how,
+        closing: draft.footer.copy!.closing,
+      },
+    },
+  };
 }
 
 function Landing() {
@@ -136,7 +201,8 @@ function Landing() {
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
   });
-  const content = contentData ?? DEFAULT_HOMEPAGE;
+  const savedContent = contentData ?? DEFAULT_HOMEPAGE;
+  const content = withBuyingAndSellingDraft(savedContent);
   const on = (id: string) => content[id]?.enabled !== false;
   useRealtimeInvalidate(
     "homepage-public-content",
@@ -147,25 +213,24 @@ function Landing() {
 
   return (
     <HomeContentCtx.Provider value={content}>
-      <div style={brand.style} className="aawaash-home relative min-h-screen overflow-x-hidden">
+      <div id="aawaash-home" style={brand.style} className="aawaash-home future-home relative min-h-screen overflow-x-hidden">
 
-        {on("header") && <LandingNav editorial copy={content.header?.copy} />}
+        {on("header") && <LandingNav copy={content.header?.copy} />}
 
         <div className="architectural-background" aria-hidden="true">
           <svg className="blueprint-tower" viewBox="0 0 600 1000" fill="none"><path d="M70 990V370L270 260V990M270 990V90L500 210V990M500 990V490L570 530V990M10 990H590M110 430L230 360M110 510L230 440M110 590L230 520M110 670L230 600M310 190L460 270M310 300L460 380M310 410L460 490M310 520L460 600M310 630L460 710M310 740L460 820" /></svg>
           <svg className="blueprint-plan" viewBox="0 0 600 700" fill="none"><path d="M30 30H570V670H30ZM60 60H330V310H60ZM360 60H540V310H360ZM60 340H250V640H60ZM280 340H540V480H280ZM280 510H540V640H280M30 310H570M250 340V670M330 30V310M280 480H570M60 460H250" /><path d="M100 30V15H500V30M570 95H585V590H570M90 670V685H510V670" strokeDasharray="3 6" /><path d="M330 170A80 80 0 0 1 410 250M250 520A75 75 0 0 1 325 595" /></svg>
           <svg className="blueprint-contours" viewBox="0 0 600 650" fill="none"><path d="M10 620V240Q10 25 225 25H590M45 650V250Q45 60 235 60H600M80 650V260Q80 95 245 95H600M115 650V270Q115 130 255 130H600" /></svg>
         </div>
+        <HomepageMotion />
         <main className="relative overflow-x-hidden">
           {on("hero") && <Hero />}
 
           {on("projects") && <Projects />}
-          {on("commission") && <Commission />}
-          {on("stats") && <Stats />}
           {on("lifestyle") && <Lifestyle />}
-          {on("discover") && <ResidenceBanner />}
-          {on("how") && <HowItWorks />}
+          <BuildingExplorer />
           {on("faq") && <FAQ />}
+          {on("residencesBanner") && <ResidencesBanner />}
           {on("contact") && <Contact />}
         </main>
 
@@ -181,46 +246,45 @@ function Hero() {
   const navigate = useNavigate();
   const hero = useSection("hero");
   const services = useSection("services");
-  const { title, accent, subtitle, copy } = hero;
+  const { copy } = hero;
   return (
-    <section id="home" className="editorial-hero reference-hero">
-      <div className="hero-stage">
-        <svg className="reference-hero-lines" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
-          <defs><clipPath id="referenceHeroPhotoClip" clipPathUnits="objectBoundingBox"><path d="M1,0 C.72,.115 .67,.145 .61,.30 L.45,.75 C.395,.90 .27,.89 0,1 H1 Z" /></clipPath></defs>
-          <path className="hero-sweep-line" d="M1000 0 C705 95 655 145 594 300 L434 750 C379 900 260 880 0 985" />
-          <path className="hero-green-blade" d="M676 137 Q755 57 865 43 Q761 102 676 137Z" />
-        </svg>
-        <svg className="hero-skyline" viewBox="0 0 230 280" fill="none" aria-hidden="true"><defs><linearGradient id="heroSkylineFade" x2="0" y2="1"><stop stopColor="#a5a8a4" /><stop offset="1" stopColor="white" stopOpacity="0" /></linearGradient></defs><g stroke="url(#heroSkylineFade)" strokeWidth="2"><path d="M15 275V150L85 105V260M85 260V42L145 5L175 25V250M145 5V250M175 250V80L208 100V260M25 150V270M38 140V270M51 132V265M64 123V263M76 113V260M96 36V255M108 28V255M120 20V254M132 13V252M158 14V250M187 88V253M199 95V258" /></g></svg>
-        <div className="hero-kicker">{(hero.eyebrow ?? "").split(" — ").map((part, i) => <span className="hero-kicker-item" key={i}>{i > 0 && <span aria-hidden="true" className="hero-kicker-dash" />}{part}</span>)}</div>
-        <div className="hero-architecture" aria-hidden="true">
-          <img src={hero.image || "/images/sky-residence-hero.webp"} alt="" fetchPriority="high" decoding="async" />
+    <section id="home" className="future-hero reference-opening-hero">
+      <div className="reference-hero-stage">
+        <div className="reference-hero-art" aria-hidden="true">
+          <img
+            src="/images/home/reference-hero-restored.webp"
+            srcSet="/images/home/reference-hero-mobile.webp 560w, /images/home/reference-hero-restored.webp 887w"
+            sizes="(max-width: 560px) 100vw, 887px"
+            width={887}
+            height={1774}
+            alt=""
+            fetchPriority="high"
+          />
         </div>
-        <div className="hero-copy">
-          <span className="editorial-rule" aria-hidden="true" />
-          <h1>{title === "More Than Just A" ? <><span className="hero-title-lead">More Than</span><span className="hero-title-join">Just A</span></> : title} <em>{accent}</em></h1>
-          <p>{subtitle}</p>
-          <a href="#projects" className="hero-explore">{copy?.action} <span><ArrowRight size={22} /></span></a>
+        <div className="reference-hero-content">
+          <p className="reference-hero-eyebrow">Real Estate · Construction · Development</p>
+          <h1>More Than <span>Just A Home.</span></h1>
+          <p className="reference-hero-description">Better living starts here.</p>
+          <ul className="reference-amenities" aria-label="Amenities">
+            <li><BadgeIndianRupee aria-hidden="true" /><span>Best Prices</span></li>
+            <li><ParkingSquare aria-hidden="true" /><span>Free parking</span></li>
+            <li><DraftingCompass aria-hidden="true" /><span>Modern Designs</span></li>
+          </ul>
         </div>
-
       </div>
-      {services.enabled && Boolean(services.items?.length) && <div className="hero-crystal-strip">
-        <svg aria-hidden="true" className="hero-crystals" viewBox="0 0 600 300" fill="none"><defs>
-          <linearGradient id="crystalFront" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#adb8c7" stopOpacity=".8" /><stop offset=".4" stopColor="#ededee" stopOpacity=".5" /><stop offset=".8" stopColor="#a4ac92" stopOpacity=".6" /><stop offset="1" stopColor="white" stopOpacity=".1" /></linearGradient>
-          <linearGradient id="crystalSide"><stop stopColor="#af8a60" stopOpacity=".55" /><stop offset="1" stopColor="white" stopOpacity=".1" /></linearGradient>
-          <radialGradient id="crystalLight"><stop stopColor="#e5e7df" /><stop offset=".4" stopColor="#c1c7b6" stopOpacity=".55" /><stop offset="1" stopColor="white" stopOpacity="0" /></radialGradient>
-        </defs>
-        <path d="M40 290 390 95 560 190 380 300Z" fill="#e7e7e9" fillOpacity=".3" />
-        {[[110,150,55],[180,110,60],[255,65,65],[335,10,70],[420,80,50]].map(([x,y,w],i)=><g key={i}><path d={`M${x} 290V${y}L${x+w} ${y-30}V290Z`} fill="url(#crystalFront)" stroke="white" strokeOpacity=".9" /><path d={`M${x+w} ${y-30}L${x+w+12} ${y-20}V290H${x+w}Z`} fill="url(#crystalSide)" stroke="white" strokeOpacity=".7" /><path d={`M${x} 220L${x+w} 190M${x} 255L${x+w} 225`} stroke="#d9ddd2" strokeOpacity=".65" /></g>)}
-        <ellipse cx="360" cy="244" rx="200" ry="40" fill="url(#crystalLight)" /><path d="M125 255H520" stroke="#d1d5c7" strokeOpacity=".45" />
-        </svg>
-        <ul className="hero-benefits" aria-label="Aawaash services">
-          {services.items?.map(({ title, body }, index) => {
-            const Icon = [Layers, Building2, Leaf, ShieldCheck, Users][index] ?? Layers;
-            return <li key={`${title}-${index}`} title={body || title}><Icon aria-hidden="true" /><span>{title}</span></li>;
-          })}
-        </ul>
-      </div>}
-      <svg className="hero-bottom-ribbon" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 Q250 195 1000 4" fill="none" stroke="#dad9da" /><path d="M570 100 Q820 24 1000 0" fill="none" stroke="#242626" strokeWidth="2" /><path d="M650 100 Q875 27 1000 29V100Z" fill="#242626" /></svg>
+      {services.enabled && <ul className="reference-hero-services" aria-label="Aawaash services and amenities">
+        {[
+          { title: "By a Home", Icon: HousePlug },
+          { title: "sell your flat", Icon: HandCoins },
+          { title: "Invest on", Icon: ChartCandlestick },
+          { title: "Best Prices", Icon: Tag },
+        ].map(({ title, Icon }) => (
+          <li key={title}>
+            <Icon aria-hidden="true" strokeWidth={1.55} />
+            <strong>{title}</strong>
+          </li>
+        ))}
+      </ul>}
       <details id="homepage-search" className="hero-search-panel">
         <summary><Search size={17} /> {copy?.searchLabel} <ChevronRight size={16} /></summary>
         <div className="pb-5">        <form
@@ -466,98 +530,32 @@ function Categories() {
 
 /* ------------------------------ LIFESTYLE ------------------------------ */
 
-const AMENITY_ICONS = [Waves, Dumbbell, Coffee, Bike];
+const AMENITY_ICONS = [Waves, Dumbbell, Armchair, Bike];
 
 function Lifestyle() {
   const sec = useSection("lifestyle");
   return (
-    <section aria-labelledby="lifestyle-title" className="lifestyle-section lifestyle-editorial refined-section">
-      <div className="lifestyle-layout">
-        <div className="lifestyle-intro">
-          {sec.eyebrow && <div className="lifestyle-eyebrow"><Leaf size={15} aria-hidden="true" />{sec.eyebrow}</div>}
-          <h2 id="lifestyle-title">{sec.title} <em>{sec.accent}</em></h2>
-          <p>{sec.subtitle}</p>
-        </div>
-        <figure className="lifestyle-visual">
-          <img src={sec.image || "/images/residence-lobby.webp"} alt="Lifestyle amenities and greenery" loading="lazy" decoding="async" width={1536} height={1024} />
-          {(sec.copy?.photoTitle || sec.copy?.photoBody) && (
-            <figcaption>
-              <Sparkles size={17} aria-hidden="true" />
-              <div>
-                {sec.copy?.photoTitle && <span>{sec.copy?.photoTitle}</span>}
-                {sec.copy?.photoBody && <p>{sec.copy?.photoBody}</p>}
-              </div>
-            </figcaption>
-          )}
-        </figure>
-        <ul className="lifestyle-features">
-          {items(sec).map((amenity, index) => {
+    <section id="living-spaces" className="home-reference-section home-lifestyle" aria-labelledby="lifestyle-title">
+      <div className="home-reference-inner">
+        <header className="home-lifestyle-copy future-project-intro">
+          <p className="listing-section-eyebrow">{sec.eyebrow}</p>
+          <h2 id="lifestyle-title">{sec.title}{sec.accent && <> <span>{sec.accent}</span></>}</h2>
+          <p className="home-reference-description">{sec.subtitle}</p>
+        </header>
+        {sec.image && <img className="home-lifestyle-art" src={sec.image} alt="" width={976} height={808} loading="lazy" decoding="async" />}
+        <ul className="home-amenities-grid">
+          {items(sec).map((item, index) => {
             const Icon = AMENITY_ICONS[index % AMENITY_ICONS.length]!;
             return (
-              <li key={`${amenity.title}-${index}`}>
-                <span className="lifestyle-feature-icon"><Icon size={19} aria-hidden="true" /></span>
-                <div>
-                  <h3>{amenity.title}</h3>
-                  {amenity.body && <p>{amenity.body}</p>}
-                </div>
+              <li key={index}>
+                <Icon aria-hidden="true" strokeWidth={1.55} />
+                <span>{item.title}</span>
+                {item.body && <p>{item.body}</p>}
               </li>
             );
           })}
         </ul>
       </div>
-    </section>
-  );
-}
-
-/* ------------------------------ BOOK VISIT ------------------------------ */
-
-function ResidenceBanner() {
-  const section = useSection("discover");
-  return (
-    <section className="residence-banner" aria-labelledby="residence-banner-title">
-      <div className="residence-banner-copy">
-        <p className="residence-banner-label">{section.eyebrow}</p>
-        <h2 id="residence-banner-title">{section.title}</h2>
-        <p className="residence-banner-description">{section.subtitle}</p>
-        <Link to="/projects" className="residence-banner-link">{section.copy?.action} <ArrowRight size={16} /></Link>
-      </div>
-      <img src={section.image || "/images/architecture-balcony.webp"} alt="" loading="lazy" decoding="async" />
-    </section>
-  );
-}
-
-/* ------------------------------ STATS ------------------------------ */
-
-const FOOTPRINT_ICONS = [Layers, Building2, TrendingUp, Users];
-
-function Stats() {
-  const sec = useSection("stats");
-  const milestoneAccent = /^measured in milestones\.$/i.test(sec.accent ?? "");
-  return (
-    <section id="milestones" aria-labelledby="milestones-title" className="home-footprint">
-      <HomeSkyline className="home-footprint-skyline" />
-      <div className="home-footprint-intro">
-        <p className="home-footprint-eyebrow">{sec.eyebrow}</p>
-        <h2 id="milestones-title">
-          <strong>{sec.title === "Built on trust." ? "Built on Trust." : sec.title}</strong>
-          {sec.accent && <span>{milestoneAccent ? <>Measured in <em>Milestones.</em></> : <em>{sec.accent}</em>}</span>}
-        </h2>
-      </div>
-      <ul className="home-footprint-metrics">
-        {items(sec).map(({ title, body }, index) => {
-          const Icon = FOOTPRINT_ICONS[index % FOOTPRINT_ICONS.length];
-          const raw = body?.trim() ?? "";
-          const number = /^([\d,.]+)(\+?)$/.exec(raw);
-          const value = number ? Number(number[1].replaceAll(",", "")).toLocaleString("en-IN") + number[2] : raw;
-          return (
-            <li key={index} className={index === 2 ? "is-highlighted" : undefined}>
-              <Icon aria-hidden="true" />
-              <strong>{value}</strong>
-              <span>{title}</span>
-            </li>
-          );
-        })}
-      </ul>
     </section>
   );
 }
@@ -661,11 +659,8 @@ const SAVITRI: ProjectDetail = {
   },
 };
 
-const WISHLIST_STORAGE_KEY = "aawaash-project-wishlist";
-
 function Projects() {
   const sec = useSection("projects");
-  const [wishlist, setWishlist] = useState<Set<string> | null>(null);
   const fetchFeatured = useServerFn(getPublicProject);
   const requestedSlug = sec.copy?.featuredSlug?.trim();
   const featuredSlug = requestedSlug && /^[a-z0-9-]+$/.test(requestedSlug) ? requestedSlug : SAVITRI.slug;
@@ -678,50 +673,20 @@ function Projects() {
   const liveImages = featured ? [featured.hero_banner_url, featured.cover_url, featured.thumbnail_url, ...(Array.isArray(featured.gallery) ? featured.gallery : [])]
     .filter((url): url is string => typeof url === "string" && !!url) : [];
   const images = [...new Set([sec.image, ...liveImages, ...(!isSavitri || (Array.isArray(featured?.gallery) && featured.gallery.length) ? [] : SAVITRI.images)].filter((url): url is string => !!url))];
-  const project = { ...SAVITRI, slug: featuredSlug, name: featured?.name ?? SAVITRI.name, tag: featured?.tag ?? (featured ? "" : SAVITRI.tag), images };
+  const project = { ...SAVITRI, slug: featuredSlug, name: featured?.name ?? SAVITRI.name, images };
   const activeIndex = (value = 0) => images.length ? ((value % images.length) + images.length) % images.length : 0;
-  useEffect(() => {
-    try {
-      const saved: unknown = JSON.parse(window.localStorage.getItem(WISHLIST_STORAGE_KEY) ?? "[]");
-      setWishlist(new Set(Array.isArray(saved) ? saved.filter(value => typeof value === "string") : []));
-    } catch {
-      setWishlist(new Set());
-    }
-  }, []);
-  useEffect(() => {
-    if (!wishlist) return;
-    try { window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify([...wishlist])); } catch { /* Storage can be disabled. */ }
-  }, [wishlist]);
   const [activeImg, setActiveImg] = useState<Record<string, number>>({});
   const [openProject, setOpenProject] = useState<ProjectDetail | null>(null);
-  const toggleWish = (name: string) =>
-    setWishlist((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
 
   return (
-    <section id="projects" className="editorial-projects home-featured-projects relative px-5 sm:px-8">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-10 h-72 bg-[radial-gradient(60%_100%_at_50%_0%,color-mix(in_oklab,var(--leaf)_8%,transparent),transparent_72%)]"
-      />
+    <section id="projects" className="future-projects editorial-projects home-featured-projects relative px-5 sm:px-8">
       <div className="project-container relative mx-auto max-w-3xl">
-        <div className="home-featured-heading luxury-commission">
-          <div className="commission-intro">
-            <div className="commission-copy">
-              <div className="editorial-eyebrow"><span />{sec.eyebrow}<span /></div>
-              <h2>{sec.title}<br /><em>{sec.accent}</em></h2>
-            </div>
-          </div>
+        <div className="future-project-intro">
+          <p className="listing-section-eyebrow">{sec.eyebrow}</p>
+          <h2>{sec.title} <span>{sec.accent}</span></h2>
         </div>
-        {/* One project per row — spacious, editorial */}
         <div className="home-featured-list">
           {(featured || (isSavitri && featured === undefined) ? [project] : []).map((p, i) => {
-            const wished = wishlist?.has(p.name) ?? false;
-            const price = featured?.slug === p.slug ? startingPrice(featured) : null;
             // Admins can replace the card cover from /admin/homepage → Projects.
             const idx = activeIndex(activeImg[SAVITRI.name]);
             // Admins can replace the card cover from /admin/homepage → Projects.
@@ -729,32 +694,15 @@ function Projects() {
             return (
               <Reveal key={p.name} variant="up" delay={i * 100}>
                 <div className="home-featured-frame">
-                  <article className="home-featured-card">
-                    <div className="home-featured-photo">
-                      <Link to="/projects/$slug" params={{ slug: p.slug }} aria-label={`View ${p.name}`}>
-                        <img src={cover || heroResidence} alt={`${p.name} exterior`} loading="lazy" decoding="async" />
-                      </Link>
-                      {p.tag && <span className="home-featured-badge"><Sparkles size={14} aria-hidden="true" />{p.tag}</span>}
-                      <button className="home-featured-wish" type="button" aria-label={wished ? "Remove from wishlist" : "Save to wishlist"}
-                        aria-pressed={wished} onClick={() => toggleWish(p.name)}>
-                        <Heart size={18} fill={wished ? "currentColor" : "none"} aria-hidden="true" />
-                      </button>
-                    </div>
-                    <div className="home-featured-info">
-                      <div className="home-featured-name">
-                        <h3><Link to="/projects/$slug" params={{ slug: p.slug }}>{p.name}</Link></h3>
-                        {featured?.location && <p className="home-featured-location"><MapPin size={12} aria-hidden="true" />{featured.location}</p>}
-                      </div>
-                      <dl className="home-featured-facts">
-                        {sec.copy?.residences && <div><BedDouble aria-hidden="true" /><dt>Configuration</dt><dd>{sec.copy.residences}</dd></div>}
-                        {sec.copy?.area && <div><Ruler aria-hidden="true" /><dt>Area</dt><dd>{sec.copy.area}</dd></div>}
-                        <div><Coins aria-hidden="true" /><dt>{sec.copy?.priceLabel || "Price"}</dt><dd>{price === null ? sec.copy?.priceFallback : formatINR(price, { compact: true })}</dd></div>
-                      </dl>
-                      <Link to="/projects/$slug" params={{ slug: p.slug }} aria-label={`Explore ${p.name}`} className="home-featured-action">
-                        {sec.copy?.action} <ArrowRight size={17} aria-hidden="true" />
-                      </Link>
-                    </div>
-                  </article>
+                  <ProjectCard
+                    project={featured ?? { id: p.slug, slug: p.slug, name: p.name }}
+                    image={cover || heroResidence}
+                    layout={isSavitri ? "3BHK" : sec.copy?.residences}
+                    priceLabel={sec.copy?.priceLabel}
+                    priceFallback={sec.copy?.priceFallback}
+                    featuredPrice
+                    animate={false}
+                  />
                     {p.images.length > 1 && (
                       <div className="project-dots flex justify-center">
                         <div role="group" aria-label="Project photos" className="home-featured-pagination">
@@ -1085,142 +1033,48 @@ function DetailContactRow({
 
 
 
-/* ------------------------------ HOW IT WORKS ------------------------------ */
-
-const STEPS = [
-  { title: "Company", body: "Aawash curates and lists premium residential projects." },
-  { title: "Team Leader", body: "Each leader owns a team and drives regional sales." },
-  { title: "Members", body: "Members work with buyers and close sales on the ground." },
-  { title: "Customer Purchase", body: "Buyers book their home with total transparency." },
-  { title: "Commission Distribution", body: "Earnings flow automatically through the ladder." },
-];
-
-function HowItWorks() {
-  const sec = useSection("how");
-  const steps = items(sec);
-  return (
-    <section id="how-it-works" className="refined-section px-5 py-14 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <SectionHeader eyebrow={sec.eyebrow ?? ""} title={sec.title ?? ""} subtitle={sec.subtitle} />
-        <div className="relative mt-10">
-          <div className="pointer-events-none absolute left-6 top-0 hidden h-full w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent md:block" />
-          <ol className="grid gap-4 md:grid-cols-1">
-            {steps.map((s, i) => (
-              <div key={`${s.title}-${i}`}>
-                <li className="glass-card relative flex items-start gap-4 rounded-3xl p-5 shadow-[var(--shadow-soft)]">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-[var(--shadow-glow)]">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-bold text-foreground">{s.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <ArrowRight
-                      size={16}
-                      className="absolute -bottom-3 left-8 hidden text-primary/60 md:block"
-                    />
-                  )}
-                </li>
-              </div>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------ COMMISSION ------------------------------ */
-
-const SLABS = [
-  { range: "₹0 – 1 Cr", tone: "from-primary-soft to-primary-soft/30" },
-  { range: "₹1 – 3 Cr", tone: "from-primary-soft to-primary-soft/30" },
-  { range: "₹3 – 5 Cr", tone: "from-leaf/25 to-leaf/5" },
-  { range: "₹5 – 7 Cr", tone: "from-leaf/30 to-leaf/5" },
-  { range: "₹7 – 10 Cr", tone: "from-gold/20 to-primary-soft" },
-  { range: "₹10 Cr+", tone: "from-gold/30 to-gold/5" },
-];
-
-function Commission() {
-  const sec = useSection("commission");
-  return (
-    <section id="commission" className="editorial-commission luxury-commission">
-      <div className="commission-intro">
-        <div className="commission-copy">
-          <div className="editorial-eyebrow"><span />{sec.eyebrow}<span /></div>
-          <h2>{sec.title}<br /><em>{sec.accent}</em></h2>
-          <p>{sec.subtitle}</p>
-        </div>
-      </div>
-      <div className="commission-tower-scene">
-        <img className="commission-tower-art" src={sec.image || DEFAULT_HOMEPAGE.commission?.image} alt="" aria-hidden="true" loading="lazy" />
-        <ol className="commission-tower-values" aria-label="Commission tiers by deal value">
-          {items(sec).map((slab, i) => (
-            <li key={`${slab.title}-${i}`} className={`commission-plaque plaque-${i + 1}`}>
-              <span>{sec.copy?.tierLabel} {i + 1}</span><strong>{slab.title}</strong><i aria-hidden="true" />{slab.body && <b>{slab.body}</b>}<small>{sec.copy?.valueLabel}</small>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-
 /* ------------------------------ FAQ ------------------------------ */
-
-const FAQS = [
-  {
-    q: "How do I get access to Aawash?",
-    a: "Aawash is invite-only. Your Team Leader or Super Admin creates your account and shares your Login ID.",
-  },
-  {
-    q: "What is my Login ID?",
-    a: "Team Leaders and Super Admins sign in with their 10-digit mobile number. Members sign in with their Team number followed by their mobile — e.g. 19876543210 for Team 1.",
-  },
-  {
-    q: "How is commission calculated?",
-    a: "Every project defines commission slabs by deal value. Once a sale is recorded, Aawash automatically distributes commission across the team ladder.",
-  },
-  {
-    q: "Is Aawash available on mobile?",
-    a: "Yes. Aawash is built mobile-first — it feels like a native app on your phone, tablet, and desktop alike.",
-  },
-  {
-    q: "How secure is my data?",
-    a: "Aawash uses role-based access control, row-level security in the database, and full audit logging on sensitive actions.",
-  },
-];
 
 function FAQ() {
   const sec = useSection("faq");
-  const faqs = items(sec);
   return (
-    <section id="faq" className="refined-section px-5 py-14 sm:px-8">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeader eyebrow={sec.eyebrow ?? ""} title={sec.title ?? ""} />
-        <Reveal variant="up" className="mt-8">
-          <div className="glass-card rounded-3xl p-2 shadow-[var(--shadow-soft)] sm:p-4">
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.map((f, i) => (
-                <AccordionItem
-                  key={`${f.title}-${i}`}
-                  value={`item-${i}`}
-                  className="border-b border-border last:border-b-0"
-                >
-                  <AccordionTrigger className="px-3 py-4 text-left text-sm font-semibold text-foreground hover:no-underline sm:text-base">
-                    {f.title}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-3 pb-4 text-sm leading-relaxed text-muted-foreground">
-                    {f.body}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+    <section id="faq" className="home-reference-section home-faq" aria-labelledby="home-faq-title">
+      <div className="home-reference-inner">
+        <header className="home-faq-intro">
+          {sec.image && <img className="home-faq-art" src={sec.image} alt="" width={471} height={357} loading="lazy" decoding="async" />}
+          <div className="home-faq-copy">
+            <p className="home-reference-kicker">{sec.eyebrow}</p>
+            <h2 id="home-faq-title">{sec.title}</h2>
           </div>
-        </Reveal>
+        </header>
+        <Accordion.Root type="single" collapsible className="home-faq-list">
+          {items(sec).map((item, index) => (
+            <Accordion.Item key={index} value={String(index)}>
+              <Accordion.Header>
+                <Accordion.Trigger className="home-faq-question">
+                  <span>{item.title}</span>
+                  <Plus aria-hidden="true" strokeWidth={1.5} />
+                </Accordion.Trigger>
+              </Accordion.Header>
+              <Accordion.Content className="home-faq-answer">{item.body}</Accordion.Content>
+            </Accordion.Item>
+          ))}
+        </Accordion.Root>
       </div>
+    </section>
+  );
+}
+
+function ResidencesBanner() {
+  const section = useSection("residencesBanner");
+  if (!section.image) return null;
+
+  return (
+    <section className="home-reference-section home-residences-banner" aria-labelledby="home-residences-title">
+      <h2 className="sr-only" id="home-residences-title">{section.title}</h2>
+      <Link to="/projects" aria-label={`${section.title} Browse projects.`}>
+        <img src={section.image} alt="" width={1440} height={1262} loading="lazy" decoding="async" />
+      </Link>
     </section>
   );
 }
@@ -1235,24 +1089,28 @@ function Contact() {
   const email = sec.copy?.recipient?.trim() || details.find(detail => detail.title.trim().toLowerCase() === "email")?.body?.trim() || "";
   const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   return (
-    <section id="contact" className="refined-section px-5 py-14 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <SectionHeader eyebrow={sec.eyebrow ?? ""} title={sec.title ?? ""} subtitle={sec.subtitle} />
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          <Reveal variant="left">
-            <div className="glass-card flex h-full flex-col gap-5 rounded-3xl p-6 shadow-[var(--shadow-soft)]">
-              {details.map((d, i) => (
-                <ContactRow
-                  key={`${d.title}-${i}`}
-                  icon={detailIcons[i % detailIcons.length]!}
-                  label={d.title}
-                  value={d.body ?? ""}
-                />
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal variant="right">
+    <section id="contact" className="home-reference-section home-contact" aria-labelledby="home-contact-title">
+      <div className="home-reference-inner">
+        <header className="home-contact-intro">
+          <div>
+            <p className="home-reference-kicker">{sec.eyebrow}</p>
+            <h2 id="home-contact-title">{sec.title}{sec.accent && <em>{sec.accent}</em>}</h2>
+            <p className="home-reference-description">{sec.subtitle}</p>
+          </div>
+          {sec.image && <img className="home-contact-art" src={sec.image} alt="" width={476} height={439} loading="lazy" decoding="async" />}
+        </header>
+        <ul className="home-contact-details">
+          {details.map((detail, index) => (
+            <ContactRow
+              key={index}
+              fallbackIcon={detailIcons[index % detailIcons.length]!}
+              label={detail.title}
+              value={detail.body ?? ""}
+            />
+          ))}
+        </ul>
+        <details className="home-contact-enquiry">
+          <summary>Make an enquiry</summary>
             <form
               onSubmit={event => {
                 event.preventDefault();
@@ -1262,7 +1120,7 @@ function Contact() {
                 window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(sec.copy?.subject ?? "")}&body=${encodeURIComponent(body)}`;
                 setDraftOpened(true);
               }}
-              className="glass-card flex h-full flex-col gap-4 rounded-3xl p-6 shadow-[var(--shadow-soft)]"
+              className="mt-4 grid gap-4"
             >
               <Field name="name" label={sec.copy?.nameLabel ?? ""} placeholder="e.g. Ritu Malhotra" />
               <Field name="email" label={sec.copy?.emailLabel ?? ""} type="email" placeholder="you@example.com" />
@@ -1277,7 +1135,7 @@ function Contact() {
                   required
                   maxLength={1500}
                   rows={4}
-                  placeholder="Tell us a little about your team…"
+                  placeholder="Share your preferred area and budget, or tell us about the flat you want to sell."
                   className="mt-1.5 w-full resize-none rounded-2xl border border-input bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -1292,34 +1150,32 @@ function Contact() {
                 {!hasEmail ? "Contact email is unavailable. Use the contact details above." : draftOpened ? "Review and send the draft from your email app." : "Review and send your enquiry in your email app."}
               </p>
             </form>
-          </Reveal>
-        </div>
+        </details>
       </div>
     </section>
   );
 }
 
-function ContactRow({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Phone;
+function ContactRow({ fallbackIcon, label, value }: {
+  fallbackIcon: typeof Phone;
   label: string;
   value: string;
 }) {
+  const kind = label.trim().toLowerCase();
+  const phone = value.replace(/[^+\d]/g, "");
+  const href = kind === "phone" && phone ? `tel:${phone}`
+    : kind === "email" && value ? `mailto:${value}`
+    : undefined;
+  const Icon = kind === "phone" ? Phone : kind === "email" ? Mail
+    : kind === "office" ? MapPinned : fallbackIcon;
   return (
-    <div className="flex items-center gap-4">
-      <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary">
-        <Icon size={18} />
+    <li className="home-contact-row">
+      <div className="home-contact-icon"><Icon aria-hidden="true" strokeWidth={1.55} /></div>
+      <div className="home-contact-value">
+        <span>{label}</span>
+        {href ? <a href={href}>{value}</a> : <strong>{value}</strong>}
       </div>
-      <div className="min-w-0">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {label}
-        </div>
-        <div className="truncate text-sm font-semibold text-foreground">{value}</div>
-      </div>
-    </div>
+    </li>
   );
 }
 
@@ -1355,109 +1211,5 @@ function Field({
 /* ------------------------------ FOOTER ------------------------------ */
 
 function Footer() {
-  const { subtitle, copy } = useSection("footer");
-  return (
-    <footer className="border-t border-border/60 bg-surface-warm/50 px-5 py-9 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <BrandMark size="sm" />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              {subtitle}
-            </p>
-          </div>
-          <FooterCol
-            title={copy?.explore ?? ""}
-            links={[
-              { label: copy?.projects ?? "", href: "#projects" },
-              { label: copy?.how ?? "", href: "#how-it-works" },
-              { label: copy?.commission ?? "", href: "#commission" },
-              { label: copy?.faq ?? "", href: "#faq" },
-            ]}
-          />
-          <FooterCol
-            title={copy?.company ?? ""}
-            links={[
-              { label: copy?.contact ?? "", href: "#contact" },
-            ]}
-          />
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {copy?.teams}
-            </div>
-            <Link
-              to="/auth"
-              className="mt-3 inline-flex h-11 items-center justify-center rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
-            >
-              {copy?.action}
-            </Link>
-          </div>
-        </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row">
-          <div>© {new Date().getFullYear()} {copy?.copyright}</div>
-          <div>{copy?.closing}</div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function FooterCol({
-  title,
-  links,
-}: {
-  title: string;
-  links: { label: string; href: string }[];
-}) {
-  return (
-    <div>
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </div>
-      <ul className="mt-3 flex flex-col gap-2">
-        {links.filter(l => l.label).map((l) => (
-          <li key={l.label}>
-            <a
-              href={l.href}
-              className="text-sm font-medium text-foreground transition-colors hover:text-primary"
-            >
-              {l.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/* ------------------------------ SHARED ------------------------------ */
-
-function SectionHeader({
-  id,
-  eyebrow,
-  title,
-  subtitle,
-}: {
-  id?: string;
-  eyebrow: string;
-  title: string;
-  subtitle?: string;
-}) {
-  return (
-    <div>
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
-          {eyebrow}
-        </div>
-        <h2 id={id} className="mt-4 text-balance text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="mt-3 text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {subtitle}
-          </p>
-        )}
-      </div>
-    </div>
-  );
+  return <SiteFooter section={useSection("footer")} />;
 }

@@ -1,0 +1,100 @@
+.about-page {
+  --about-olive: #53643d;
+  --about-ink: #232921;
+  --about-muted: #50594b;
+  --about-line: #72805a38;
+  --about-pale: #eff1e8;
+  color: var(--about-ink);
+  background: #fafbf7;
+  min-height: 100vh;
+}
+.about-page main { max-width: 1150px; margin: auto; padding: clamp(105px, 12vw, 142px) clamp(19px, 5vw, 54px) 110px; }
+.about-page h1, .about-page h2, .about-page h3 { margin: 0; color: var(--about-ink); }
+.about-page h1 { font: 400 clamp(1.95rem, 4vw, 3.3rem)/1.1 Georgia, serif; letter-spacing: -.04em; }
+.about-page h2 { font: 400 clamp(1.45rem, 2.9vw, 2.2rem)/1.18 Georgia, serif; letter-spacing: -.025em; }
+.about-page h3 { font-size: clamp(.96rem, 1.6vw, 1.13rem); font-weight: 650; }
+.about-page main p { margin: 0; color: var(--about-muted); line-height: 1.65; }
+
+.about-hero { display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: clamp(24px, 6vw, 76px); }
+.about-hero-copy { display: grid; gap: 16px; max-width: 45ch; animation: about-arrive .55s ease-out both; }
+.about-page p.about-statement { font-size: clamp(1rem, 1.75vw, 1.23rem); color: var(--about-olive); font-weight: 610; }
+.about-hero-image { position: relative; margin: 0; animation: about-arrive .64s .06s ease-out both; }
+.about-hero-image img { display: block; width: 100%; aspect-ratio: 7 / 5; object-fit: cover; border-radius: 8px; }
+.about-hero-image figcaption { color: var(--about-muted); font-size: .78rem; margin-top: 9px; }
+
+.about-section { margin-top: clamp(37px, 7.5vw, 92px); padding-top: clamp(20px, 4vw, 40px); border-top: 1px solid var(--about-line); }
+.about-section h2 { margin-bottom: 15px; }
+.about-story { display: grid; grid-template-columns: .85fr 1.15fr; align-items: center; gap: clamp(20px, 6vw, 72px); }
+.about-story-image { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
+.about-story p + p { margin-top: 11px; }
+
+.about-icon-grid, .about-journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(13px, 3vw, 26px); margin: 0; padding: 0; }
+.about-icon-grid { list-style: none; }
+.about-icon-grid li, .about-journey li { padding: 14px 0; }
+.about-icon-grid li + li, .about-journey li + li { border-inline-start: 1px solid var(--about-line); padding-inline-start: clamp(13px, 3vw, 26px); }
+.about-icon-grid svg { color: var(--about-olive); width: 23px; height: 23px; margin-bottom: 9px; }
+.about-icon-grid p, .about-journey p { margin-top: 6px !important; font-size: .92rem; }
+.about-section-copy { max-width: 68ch; }
+.about-portfolio { position: relative; isolation: isolate; }
+.about-portfolio::before { content: ""; position: absolute; inset: 4% 0 0 55%; z-index: -1; opacity: .12; background: url("/images/home/construction-linework.svg") right center / contain no-repeat; }
+.about-portfolio .about-icon-grid { margin-top: 12px; }
+.about-journey { list-style: decimal inside; }
+.about-journey li::marker { color: var(--about-olive); font-weight: 650; }
+.about-journey h3 { display: inline; }
+
+.about-contact { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: clamp(21px, 4vw, 38px); background: var(--about-pale); border-radius: 8px; }
+.about-contact h2 { margin-bottom: 8px; }
+.about-contact-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.about-contact-links a { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 8px 13px; border: 1px solid var(--about-line); border-radius: 6px; color: var(--about-olive); font-weight: 650; white-space: nowrap; transition: background .2s ease; }
+.about-contact-links a:first-child { background: var(--about-olive); color: white; }
+.about-contact-links a:hover { background: #dfe7d2; color: var(--about-ink); }
+.about-contact-links a:focus-visible { outline: 2px solid var(--about-olive); outline-offset: 3px; }
+
+@keyframes about-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 680px) {
+  .about-hero, .about-story, .about-icon-grid, .about-journey { grid-template-columns: minmax(0, 1fr); }
+  .about-hero-copy { gap: 12px; }
+  .about-story > div { grid-row: 1; }
+  .about-icon-grid, .about-journey { gap: 0; }
+  .about-icon-grid li + li, .about-journey li + li { border-inline-start: 0; border-top: 1px solid var(--about-line); padding-inline-start: 0; }
+  .about-contact { align-items: flex-start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-hero-copy, .about-hero-image { animation: none; }
+  .about-contact-links a { transition: none; }
+}
+
+.about-page { background: #fcfdf9; }
+.about-page main { padding-bottom: clamp(2.5rem, 7vw, 5rem); }
+.about-page main .about-kicker { color: #53643d; font-size: .73rem; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+.about-page h1 { max-width: 13ch; font-size: clamp(2.3rem, 6.3vw, 4.7rem); }
+.about-hero { position: relative; isolation: isolate; }
+.about-hero::before { content: ""; position: absolute; inset: 0 49% -20% -8%; z-index: -1; background: url("/images/home/construction-linework.svg") bottom left / contain no-repeat; opacity: .1; }
+.about-hero-image img { aspect-ratio: 6 / 5; border-radius: 1rem 1rem 4.5rem 1rem; }
+.about-hero-image figcaption { padding-inline-end: 1rem; text-align: right; }
+.about-story { padding: clamp(1rem, 3vw, 2.25rem); border: 1px solid #dce3d3; border-radius: 1.1rem; background: #f1f4ec; }
+.about-story-image { aspect-ratio: 5 / 4; border-radius: .7rem; }
+.about-icon-grid { gap: .75rem; }
+.about-icon-grid li, .about-icon-grid li + li { padding: 1rem; border: 1px solid #dce3d3; border-radius: .75rem; background: #fffffff0; }
+.about-icon-grid li svg { box-sizing: content-box; padding: .45rem; border-radius: .55rem; background: #edf1e7; }
+.about-portfolio::before { inset: 0 0 30% 50%; opacity: .22; }
+.about-review { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1fr); align-items: center; gap: clamp(1rem, 5vw, 3rem); padding: clamp(1rem, 5vw, 2.4rem); border: 1px solid #dce3d3; border-radius: 1rem; background: #f0f3eb; }
+.about-review img { width: 100%; max-height: 13rem; object-fit: contain; opacity: .65; }
+.about-review p + p { margin-top: .65rem; }
+.about-journey { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.about-journey li { border-top: 2px solid #7c8b6a; }
+.about-journey li + li { border-inline-start: 0; padding-inline-start: 0; }
+.about-contact { background: #313f2e; }
+.about-page .about-contact :is(h2, p) { color: #f1f4ea; }
+.about-contact-links a { border-color: #cdd8c0; color: #f1f4ea; }
+.about-contact-links a:first-child { background: #e5edda; color: #263324; }
+.about-contact-links a:focus-visible { outline-color: #e5edda; }
+@media (max-width: 680px) {
+  .about-hero-image img { aspect-ratio: 4 / 3; }
+  .about-journey { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .about-journey li + li { border-top: 2px solid #7c8b6a; }
+}
+@media (max-width: 390px) {
+  .about-review { grid-template-columns: minmax(0, 1fr); }
+  .about-review img { max-height: 7rem; }
+}

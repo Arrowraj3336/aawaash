@@ -1,0 +1,197 @@
+/* ORBIT / immersive property editorial. Strictly homepage scoped. */
+#aawaash-home #home.future-hero{position:relative;isolation:isolate;max-width:none;min-height:900px;padding:115px 6% 24px;background:#171d19;color:#fff;overflow:hidden}
+#aawaash-home .atelier-coordinate{position:relative;z-index:4;display:flex;justify-content:space-between;gap:20px;font-size:9px;letter-spacing:.14em;color:#e8ecddab;border-bottom:1px solid #ffffff25;padding-bottom:20px}
+#aawaash-home .future-hero-layout{display:block;position:static}
+#aawaash-home .future-hero-copy{position:relative;z-index:3;max-width:750px;padding:70px 0 44px}
+#aawaash-home .future-hero-copy .future-label{color:#c6d49f;font-size:9px}
+#aawaash-home .future-motto{font-size:12px;color:#e2e6dd;margin:30px 0 18px;max-width:none}
+#aawaash-home #home.future-hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(54px,6.8vw,96px);font-weight:500;letter-spacing:-.07em;line-height:1.02;max-width:800px;color:#fff;text-wrap:balance}
+#aawaash-home #home.future-hero h1 span{color:#d5e2b6;font-weight:300;font-family:inherit}
+#aawaash-home .future-hero-description{max-width:370px;color:#d4d9cf;font-size:12px;line-height:1.85;margin:25px 0}
+#aawaash-home .future-hero-image{position:absolute;inset:0;width:100%;height:100%;margin:0;border-radius:0;background:#171d19;z-index:-2;transform:none;overflow:hidden}
+#aawaash-home .future-hero-image>img{height:110%;width:100%;object-fit:cover;object-position:70% center;transform:translateY(var(--parallax-y,0px));opacity:.75}
+#aawaash-home .future-hero-image:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#111814ec 0%,#111814b8 40%,#11181408 100%),linear-gradient(0deg,#111814 0%,transparent 55%)}
+#aawaash-home .future-photo-grid,#aawaash-home .future-image-corner{display:none}
+#aawaash-home .future-hero-image figcaption{position:absolute;left:auto;right:6%;top:auto;bottom:155px;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:none;border:0;border-left:1px solid #d5e2b6;padding:5px 0 5px 20px;border-radius:0;color:#fff;font-size:10px}
+#aawaash-home .future-hero-image figcaption>span:last-child{display:flex;align-items:center;gap:15px;color:#ced7bf}
+#aawaash-home .future-hero-footnote{color:#bac6ac;font-size:9px;margin-top:24px}
+#aawaash-home .future-hero-footnote svg{color:#bac6ac}
+#aawaash-home .future-button{border-radius:0;padding:15px 22px;background:#d5e2b6;color:#20271b;border:0;min-height:50px;gap:35px;transition:background .25s,transform .25s}
+#aawaash-home .future-button:hover{background:#e8f0d5;transform:translateY(-3px)}
+#aawaash-home .future-hero-copy .future-text-link{color:#fff;border-color:#ffffff60}
+#aawaash-home .orbit-reticle{position:absolute;width:300px;height:300px;right:8%;top:240px;border:1px solid #ffffff36;border-radius:50%;pointer-events:none;z-index:1}
+#aawaash-home .orbit-reticle:after{content:'';position:absolute;inset:25px;border:1px dashed #ffffff38;border-radius:50%;animation:orbit-turn 80s linear infinite}
+#aawaash-home .orbit-reticle i{position:absolute;inset:50% -35px auto;height:1px;background:#ffffff42}
+#aawaash-home .orbit-reticle b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:34px;font-weight:200;color:#d5e2b6}
+#aawaash-home .future-services{position:relative;z-index:3;margin:25px 0 0;border-color:#ffffff25;counter-reset:service}
+#aawaash-home .future-services li{padding-block:22px;counter-increment:service;gap:15px}
+#aawaash-home .future-services li:before{display:none}
+#aawaash-home .future-services li:after{content:'0' counter(service);font-size:9px;color:#95a580;margin-left:auto}
+#aawaash-home .future-services li+li{border-left:1px solid #ffffff25}
+#aawaash-home .future-services p{color:#a7b39e}
+#aawaash-home .future-services strong{color:#fff;font-size:11px}
+#aawaash-home .future-service-icon{background:none;color:#c6d49f;border-radius:0}
+#aawaash-home .future-services li>svg{display:none}
+#aawaash-home #home.future-hero .hero-search-panel{position:relative;z-index:3;margin-top:0;color:#252729}
+#aawaash-home #home.future-hero .hero-search-panel>summary{color:#c6d49f}
+#aawaash-home .future-section-intro{align-items:end;margin-bottom:44px}
+#aawaash-home .future-section-intro h2{font-size:clamp(34px,4.3vw,58px);font-weight:400;letter-spacing:-.06em;line-height:1.06}
+#aawaash-home .future-section-intro h2 span{display:inline;color:#677a3d;margin-left:.2em}
+#aawaash-home .future-label{font-size:9px;letter-spacing:.18em}
+#aawaash-home .future-projects{padding:90px 40px;max-width:1320px}
+#aawaash-home .future-projects .home-featured-card{display:block;position:relative;border:0;border-radius:0;background:#252729;overflow:hidden;min-height:560px}
+#aawaash-home .future-projects .home-featured-photo{height:560px;border-radius:0;width:100%}
+#aawaash-home .future-projects .home-featured-photo:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#111812ed);pointer-events:none}
+#aawaash-home .future-projects .home-featured-info{position:absolute;bottom:0;left:0;right:0;background:none;padding:35px 40px;display:grid;grid-template-columns:1fr 1.05fr;column-gap:70px;color:white;z-index:2}
+#aawaash-home .future-projects .home-featured-name h3{font-size:42px;font-weight:400;color:white}
+#aawaash-home .future-projects .home-featured-location{color:#d2d9c8;grid-column:1;font-size:11px}
+#aawaash-home .future-projects .home-featured-facts{grid-column:2;grid-row:1 / span 2;margin:0;padding:12px 0;border-color:#ffffff35}
+#aawaash-home .future-projects .home-featured-facts dd{color:#fff;font-size:12px}
+#aawaash-home .future-projects .home-featured-facts dt{color:#bfccb0}
+#aawaash-home .future-projects .home-featured-facts svg{color:#c6d49f}
+#aawaash-home .future-projects .home-featured-action{grid-column:2;background:none;color:#d5e2b6;border:0;border-radius:0;border-bottom:1px solid #ffffff35;padding:10px 0;min-height:44px}
+#aawaash-home .future-projects .home-featured-badge{border-radius:0;background:#e8ecdd;color:#28331f}
+#aawaash-home #milestones.future-story{border-radius:0;background:#f1f3eb;color:#252729;max-width:none;margin:70px 0 0;padding:90px max(40px,calc((100vw - 1160px)/2));isolation:isolate;overflow:hidden}
+#aawaash-home .future-story:before{display:none}
+#aawaash-home .future-story-top{grid-template-columns:.85fr 1.15fr;gap:90px;align-items:center}
+#aawaash-home #milestones.future-story h2{font-size:42px;color:#252729;font-weight:400}
+#aawaash-home #milestones.future-story h2 span{color:#677a3d}
+#aawaash-home #milestones.future-story .future-label{color:#677a3d}
+#aawaash-home .future-since{position:relative;align-items:end;margin-top:35px;gap:18px}
+#aawaash-home .future-since>span{font-size:145px;letter-spacing:-.09em;line-height:.9;font-weight:300;color:#677a3d}
+#aawaash-home .future-since>span>span{font-size:50px;vertical-align:top;letter-spacing:-.05em}
+#aawaash-home .future-since p{font-size:8px;color:#707b60;line-height:1.8;letter-spacing:.1em}
+#aawaash-home .future-story-copy p{color:#68705e;font-size:13px;line-height:1.9}
+#aawaash-home .future-story-copy p:first-child{color:#252729;font-size:21px;line-height:1.6;letter-spacing:-.025em}
+#aawaash-home .future-promises{border-top:1px solid #cad2bc;padding-top:30px;gap:35px;margin-top:45px;position:relative}
+#aawaash-home .future-promises li{display:grid;grid-template-columns:30px 1fr;gap:8px 15px;padding:0}
+#aawaash-home .future-promises svg{grid-row:1 / span 2;color:#677a3d;position:static;margin:0}
+#aawaash-home .future-promises h3{color:#252729;font-size:12px;margin:0}
+#aawaash-home .future-promises p{color:#6c755f;font-size:11px;grid-column:2}
+#aawaash-home .atelier-drawing{position:absolute;pointer-events:none;fill:none;stroke:currentColor;stroke-width:.8;color:#677a3d}
+#aawaash-home .future-story>.atelier-plan{width:650px;left:-300px;top:0;opacity:.08;transform:rotate(30deg);z-index:-1}
+#aawaash-home #living-spaces.future-spaces{padding:95px 40px;max-width:1240px}
+#aawaash-home .orbit-explorer{display:grid;grid-template-columns:1fr 1fr;border:1px solid #d5ddc9;background:#fff;min-height:440px}
+#aawaash-home .orbit-explorer-art{position:relative;overflow:hidden;min-height:440px;background:#252c23;color:#d5e2b6;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:35px 35px}
+#aawaash-home .orbit-explorer-art .atelier-drawing{height:90%;width:90%;top:7%;left:5%;color:#c1d59b;stroke-width:1.3;filter:drop-shadow(0 0 6px #a4bf6940);animation:orbit-draw-in .7s ease}
+#aawaash-home .orbit-explorer-content{padding:45px;display:flex;flex-direction:column;justify-content:center}
+#aawaash-home .orbit-tabs{display:flex;flex-direction:column}
+#aawaash-home .orbit-tabs button{border-bottom:1px solid #e0e6d6;padding:24px 0;display:flex;gap:18px;align-items:center;text-align:left;color:#8c9680;font-size:10px;transition:color .25s}
+#aawaash-home .orbit-tabs button span{font-size:24px;letter-spacing:-.04em;color:#737a6b;flex:1}
+#aawaash-home .orbit-tabs button[aria-pressed=true]{color:#677a3d;border-color:#677a3d}
+#aawaash-home .orbit-tabs button[aria-pressed=true] span{color:#252729}
+#aawaash-home .orbit-space-panel{animation:orbit-draw-in .35s ease;min-height:110px;padding-top:25px}
+#aawaash-home .orbit-space-panel p{font-size:12px;color:#707a63;line-height:1.8;margin-bottom:10px}
+#aawaash-home #next-chapter.future-banner{max-width:none;display:block;position:relative;min-height:490px;background:#192119;margin:0;border-radius:0;padding:0;isolation:isolate}
+#aawaash-home #next-chapter.future-banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4;z-index:-2;grid-column:auto;object-position:center 60%}
+#aawaash-home #next-chapter.future-banner:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#172014e8,transparent);z-index:-1}
+#aawaash-home .future-banner-copy{padding:80px max(40px,calc((100vw - 1160px)/2));color:#fff}
+#aawaash-home #next-chapter.future-banner h2{max-width:650px;font-size:65px;font-weight:400;color:#fff;line-height:1.04;letter-spacing:-.06em}
+#aawaash-home #next-chapter.future-banner .future-label,#aawaash-home .future-banner-copy>p:not(.future-label){color:#d1ddc0}
+#aawaash-home #next-chapter.future-banner .future-text-link{color:#fff;border-color:#ffffff40}
+#aawaash-home #next-chapter.future-banner .future-button{background:#d5e2b6;color:#252729}
+#aawaash-home #how-it-works.future-journey{max-width:1240px;position:relative;padding:95px 40px;isolation:isolate}
+#aawaash-home .atelier-contours{right:-100px;top:0;width:400px;opacity:.1;z-index:-1}
+#aawaash-home #how-it-works.future-journey ol{display:grid;grid-template-columns:1fr 1fr;gap:0;counter-reset:steps}
+#aawaash-home #how-it-works.future-journey li{display:grid;grid-template-columns:60px 1fr;gap:10px 20px;padding:30px;counter-increment:steps;border:1px solid #e3e7db;margin:-1px 0 0 -1px;background:#ffffffb0;position:relative}
+#aawaash-home #how-it-works.future-journey li:before{content:'0' counter(steps);grid-row:1 / span 2;font-size:45px;font-weight:300;letter-spacing:-.08em;color:#abb995}
+#aawaash-home .future-step-icon{position:absolute;right:20px;top:20px;border:0;background:none;width:25px;height:25px;opacity:.4;margin:0}
+#aawaash-home #how-it-works.future-journey h3{grid-column:2;font-size:16px;font-weight:500;padding-right:20px}
+#aawaash-home #how-it-works.future-journey li p{grid-column:2;font-size:12px;max-width:300px}
+#aawaash-home #faq.future-faq{padding:70px 40px;max-width:1240px;border-top:1px solid #dbe2cf}
+#aawaash-home #faq.future-faq>div{grid-template-columns:1fr;gap:30px}
+#aawaash-home #faq.future-faq>div>div:first-child>div{max-width:none}
+#aawaash-home #faq.future-faq h2{font-size:48px!important;letter-spacing:-.05em}
+#aawaash-home #faq.future-faq button{font-size:16px;padding:23px 0}
+#aawaash-home #faq.future-faq [data-state=open]>div{font-size:13px}
+#aawaash-home #contact.future-contact{max-width:none;margin:0;padding:70px max(40px,calc((100vw - 1160px)/2));background:#f1f3eb;border-top:0}
+#aawaash-home #contact.future-contact .glass-card{border-radius:0;background:#fff;border:0;padding:35px}
+#aawaash-home #contact.future-contact input,#aawaash-home #contact.future-contact textarea{border-radius:0;background:#f7f8f5;border:0;border-bottom:1px solid #d5dec7}
+#aawaash-home #contact.future-contact form button{background:#252729;border-radius:0}
+#aawaash-home .future-footer{background:#252729;border:0;color:#fff;padding-top:50px}
+#aawaash-home .future-footer p,#aawaash-home .future-footer a{color:#c6d0bb}
+#aawaash-home .future-footer a[href='/auth']{background:#d5e2b6;color:#252729;border-radius:0}
+#aawaash-home .atelier-reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease var(--reveal-delay,0ms),transform .5s ease var(--reveal-delay,0ms)}
+#aawaash-home .atelier-visible{opacity:1;transform:none}
+@keyframes orbit-turn{to{transform:rotate(360deg)}}
+@keyframes orbit-draw-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:800px){
+#aawaash-home .orbit-reticle{width:190px;height:190px;right:5%;top:300px;opacity:.6}
+#aawaash-home .future-hero-copy{max-width:650px}
+#aawaash-home .future-projects .home-featured-info{padding:28px;column-gap:30px}
+#aawaash-home .future-projects .home-featured-name h3{font-size:33px}
+#aawaash-home .future-story-top{gap:40px}
+#aawaash-home .orbit-explorer-content{padding:25px}
+#aawaash-home .orbit-tabs button span{font-size:21px}
+}
+@media(max-width:640px){
+#aawaash-home #home.future-hero{padding:90px 22px 18px;min-height:850px}
+#aawaash-home .atelier-coordinate{font-size:7px;gap:30px;line-height:1.7;padding-bottom:16px}
+#aawaash-home .atelier-coordinate>span:last-child{text-align:right;max-width:130px}
+#aawaash-home .future-hero-copy{padding:100px 0 35px}
+#aawaash-home #home.future-hero h1{font-size:clamp(40px,11.3vw,62px);letter-spacing:-.065em;max-width:450px}
+#aawaash-home .future-hero-image>img{object-position:66% center;opacity:.7}
+#aawaash-home .future-hero-image:after{background:linear-gradient(0deg,#111814 0%,#111814aa 50%,#11181430 100%)}
+#aawaash-home .future-motto{font-size:11px;margin:25px 0 15px;max-width:270px}
+#aawaash-home .future-hero-description{font-size:11px;line-height:1.9;max-width:300px;margin:22px 0}
+#aawaash-home .future-hero-copy .future-label{font-size:8px}
+#aawaash-home .future-hero-image figcaption{display:none}
+#aawaash-home .future-hero-footnote{font-size:8px;margin-top:20px}
+#aawaash-home .orbit-reticle{top:155px;right:25px;width:100px;height:100px;opacity:.6}
+#aawaash-home .orbit-reticle:after{inset:12px}
+#aawaash-home .orbit-reticle i{inset:50% -12px auto}
+#aawaash-home .orbit-reticle b{font-size:20px}
+#aawaash-home .future-actions{gap:20px}
+#aawaash-home .future-button{font-size:11px;min-height:46px;padding:12px 16px;gap:20px}
+#aawaash-home .future-services{margin-top:0}
+#aawaash-home .future-services li{padding:18px 5px;gap:5px}
+#aawaash-home .future-services li:after{display:none}
+#aawaash-home .future-services strong{font-size:9px}
+#aawaash-home .future-service-icon{width:28px;height:28px;flex-basis:28px}
+#aawaash-home .future-section-intro{margin-bottom:26px;gap:20px}
+#aawaash-home .future-section-intro h2{font-size:34px;line-height:1.08}
+#aawaash-home .future-section-intro h2 span{display:block;margin-left:0}
+#aawaash-home .future-projects{padding:55px 20px}
+#aawaash-home .future-projects .home-featured-card{min-height:520px}
+#aawaash-home .future-projects .home-featured-photo{height:520px}
+#aawaash-home .future-projects .home-featured-info{display:block;padding:25px 22px}
+#aawaash-home .future-projects .home-featured-name h3{font-size:32px}
+#aawaash-home .future-projects .home-featured-location{font-size:10px}
+#aawaash-home .future-projects .home-featured-facts{margin:18px 0 5px;padding:15px 0}
+#aawaash-home .future-projects .home-featured-facts dd{font-size:10px}
+#aawaash-home .future-projects .home-featured-facts dt{font-size:8px}
+#aawaash-home .future-projects .home-featured-action{font-size:11px}
+#aawaash-home #milestones.future-story{margin:40px 0 0;padding:55px 25px}
+#aawaash-home .future-story-top{grid-template-columns:1fr;gap:30px}
+#aawaash-home #milestones.future-story h2{font-size:34px}
+#aawaash-home .future-since{margin-top:28px}
+#aawaash-home .future-since>span{font-size:120px}
+#aawaash-home .future-story-copy p:first-child{font-size:18px}
+#aawaash-home .future-story-copy p{font-size:12px}
+#aawaash-home .future-promises{grid-template-columns:1fr;gap:26px;margin-top:30px}
+#aawaash-home .future-promises li{padding:0}
+#aawaash-home #living-spaces.future-spaces{padding:60px 20px}
+#aawaash-home .orbit-explorer{grid-template-columns:1fr}
+#aawaash-home .orbit-explorer-art{min-height:290px}
+#aawaash-home .orbit-explorer-content{padding:15px 22px 25px}
+#aawaash-home .orbit-tabs button{padding:19px 0;font-size:9px}
+#aawaash-home .orbit-tabs button span{font-size:20px}
+#aawaash-home .orbit-space-panel{min-height:105px;padding-top:20px}
+#aawaash-home #next-chapter.future-banner{min-height:440px}
+#aawaash-home #next-chapter.future-banner>img{position:absolute;height:100%;width:100%}
+#aawaash-home .future-banner-copy{padding:65px 25px}
+#aawaash-home #next-chapter.future-banner h2{font-size:44px;max-width:330px}
+#aawaash-home .future-banner-copy>p:not(.future-label){font-size:12px}
+#aawaash-home #how-it-works.future-journey{padding:60px 20px}
+#aawaash-home #how-it-works.future-journey ol{grid-template-columns:1fr}
+#aawaash-home #how-it-works.future-journey li{padding:25px 20px;grid-template-columns:40px 1fr;gap:5px 15px}
+#aawaash-home #how-it-works.future-journey h3{font-size:15px}
+#aawaash-home #how-it-works.future-journey li p{font-size:11px}
+#aawaash-home #how-it-works.future-journey li:before{font-size:35px}
+#aawaash-home #faq.future-faq{margin:0;padding:50px 25px}
+#aawaash-home #faq.future-faq h2{font-size:34px!important}
+#aawaash-home #faq.future-faq button{font-size:12px;padding:20px 0}
+#aawaash-home #contact.future-contact{padding:50px 20px}
+#aawaash-home #contact.future-contact .glass-card{padding:25px}
+}
+@media(prefers-reduced-motion:reduce){#aawaash-home .orbit-reticle:after,#aawaash-home .orbit-space-panel,#aawaash-home .orbit-explorer-art .atelier-drawing{animation:none}#aawaash-home .atelier-reveal{opacity:1;transform:none;transition:none}#aawaash-home [data-parallax]>img{transform:none}}

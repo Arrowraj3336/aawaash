@@ -1,192 +1,159 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin, Share2, ArrowUpRight } from "lucide-react";
+import { Building, Building2, Heart, Home, MapPin, PanelsTopLeft, Share2 } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { formatINR } from "@/components/aawash/dashboard-kit";
-
 import { P_SHREE_SLUG } from "@/lib/p-shree";
 import { startingPrice } from "@/lib/public-catalogue";
+import { SAVITRI_SLUG } from "@/lib/savitri-enclave-brochure";
+import "./project-card.css";
 
 export interface ProjectCardData {
   id: string;
   slug: string;
   name: string;
-  location: string;
-  tag?: string | null;
-  short_description?: string | null;
-  description?: string | null;
-  price_from: number;
+  location?: string | null;
+  address?: string | null;
+  price_from?: number | null;
   price_min?: number | null;
   total_flats?: number | null;
-  available_flats?: number | null;
-  sold_flats?: number | null;
   total_units?: number | null;
-  sold_units?: number | null;
-  completion_percent?: number | null;
-  construction_status?: string | null;
-  hero_hue?: string | null;
+  total_floors?: number | null;
+  cover_url?: string | null;
   thumbnail_url?: string | null;
   hero_banner_url?: string | null;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  planning: "Planning",
-  pre_launch: "Pre-Launch",
-  under_construction: "Under Construction",
-  nearing_completion: "Nearing Completion",
-  ready_to_move: "Ready to Move",
-  completed: "Completed",
-  on_hold: "On Hold",
-};
+const WISHLIST_KEY = "aawaash-project-wishlist";
+const WISHLIST_EVENT = "aawaash:wishlist-changed";
 
-/**
- * Aawash Project Card — shared premium card used across landing, /projects,
- * dashboards, and favorites. Uses semantic tokens only.
- */
-export function ProjectCard({
-  project,
-  isFavorite = false,
-  onToggleFavorite,
-  onShare,
-  index = 0,
-  animate = true,
-}: {
-  project: ProjectCardData;
-  isFavorite?: boolean;
-  onToggleFavorite?: (id: string) => void;
-  onShare?: (project: ProjectCardData) => void;
-  index?: number;
-  animate?: boolean;
-}) {
-  const total = project.total_flats ?? project.total_units ?? 0;
-  const sold = project.sold_flats ?? project.sold_units ?? 0;
-  const available = project.available_flats ?? Math.max(total - sold, 0);
-  const availabilityUnconfirmed = project.slug === "27th" && project.available_flats == null;
-  const proposed = project.slug === P_SHREE_SLUG && project.construction_status === "planning";
-  const salesPct = total ? Math.min(100, Math.round((sold / total) * 100)) : 0;
-  const buildPct = project.completion_percent ?? 0;
-  const heroImg = project.hero_banner_url || project.thumbnail_url;
-  const hue = project.hero_hue || "from-primary/25 to-primary/10";
-  const price = startingPrice(project);
+function readWishlist(): string[] {
+  try {
+    const saved: unknown = JSON.parse(window.localStorage.getItem(WISHLIST_KEY) ?? "[]");
+    return Array.isArray(saved) ? saved.filter((name): name is string => typeof name === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function WishlistButton({ name }: { name: string }) {
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setSaved(readWishlist().includes(name));
+    sync();
+    window.addEventListener("storage", sync);
+    window.addEventListener(WISHLIST_EVENT, sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(WISHLIST_EVENT, sync);
+    };
+  }, [name]);
+
+  function toggle() {
+    const next = new Set(readWishlist());
+    if (saved) next.delete(name);
+    else next.add(name);
+    setSaved(!saved);
+    try {
+      window.localStorage.setItem(WISHLIST_KEY, JSON.stringify([...next]));
+      window.dispatchEvent(new Event(WISHLIST_EVENT));
+    } catch {
+      // The current card remains usable when persistent storage is disabled.
+    }
+  }
 
   return (
-    <article
-      className={`group glass-card ${animate ? "animate-fade-up" : ""} overflow-hidden rounded-3xl shadow-[var(--shadow-soft)] transition-colors duration-150`}
-      style={animate ? { animationDelay: `${Math.min(index * 60, 300)}ms` } : undefined}
-    >
-      <Link to="/projects/$slug" params={{ slug: project.slug }} className="block">
-        <div className={`relative aspect-[16/10] overflow-hidden bg-gradient-to-br ${hue}`}>
-          {heroImg ? (
-            <img
-              src={heroImg}
-              alt={project.name}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_60%)]" />
-          )}
-          <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
-            {project.tag ? (
-              <span className="glass-card rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                {project.tag}
-              </span>
-            ) : (
-              <span />
-            )}
-            <div className="flex items-center gap-1.5">
-              {onShare && (
-                <button
-                  type="button"
-                  aria-label="Share project"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onShare(project);
-                  }}
-                  className="glass-card grid h-8 w-8 place-items-center rounded-full text-foreground/80 transition hover:text-primary"
-                >
-                  <Share2 size={14} />
-                </button>
-              )}
-              {onToggleFavorite && (
-                <button
-                  type="button"
-                  aria-label={isFavorite ? "Remove favorite" : "Add favorite"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onToggleFavorite(project.id);
-                  }}
-                  className={`glass-card grid h-8 w-8 place-items-center rounded-full transition ${
-                    isFavorite ? "text-destructive" : "text-foreground/80 hover:text-destructive"
-                  }`}
-                >
-                  <Heart size={14} fill={isFavorite ? "currentColor" : "none"} />
-                </button>
-              )}
-            </div>
-          </div>
-          {project.construction_status && (
-            <span className="glass-card absolute bottom-3 left-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground/90">
-              {STATUS_LABELS[project.construction_status] || project.construction_status}
-            </span>
-          )}
-        </div>
-      </Link>
-
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <Link
-              to="/projects/$slug"
-              params={{ slug: project.slug }}
-              className="block truncate text-base font-bold text-foreground hover:text-primary"
-            >
-              {project.name}
-            </Link>
-            <div className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin size={12} /> {project.location}
-            </div>
-          </div>
-          <Link
-            to="/projects/$slug"
-            params={{ slug: project.slug }}
-            aria-label="Explore project"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition hover:brightness-110"
-          >
-            <ArrowUpRight size={16} />
-          </Link>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          <Stat label="Starting" value={price === null ? "On Request" : formatINR(price, { compact: true })} />
-          <Stat label={proposed ? "Planned homes" : availabilityUnconfirmed ? "Availability" : "Available"} value={availabilityUnconfirmed ? "Enquire" : String(proposed ? total : available)} />
-          <Stat label={proposed ? "Availability" : "Progress"} value={proposed && project.available_flats == null ? "Enquire" : proposed ? String(available) : `${buildPct}%`} />
-        </div>
-
-        {!proposed && <div className="mt-3">
-          <div className="mb-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <span>Sales</span>
-            <span>{salesPct}%</span>
-          </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-700"
-              style={{ width: `${salesPct}%` }}
-            />
-          </div>
-        </div>}
-      </div>
-    </article>
+    <button type="button" className="listing-reference-wish"
+      aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+      aria-pressed={saved} onClick={toggle}>
+      <Heart size={18} fill={saved ? "currentColor" : "none"} aria-hidden="true" />
+    </button>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function ProjectPhoto({ images, name }: { images: string[]; name: string }) {
+  const [index, setIndex] = useState(0);
+  return images[index]
+    ? <img src={images[index]} alt={`${name} exterior`} loading="lazy" decoding="async" onError={() => setIndex(index + 1)} />
+    : <Building2 className="listing-reference-placeholder" aria-hidden="true" />;
+}
+
+export function ProjectCard({
+  project, image, layout, priceLabel = "Starting from", priceFallback = "On request",
+  manage = false, children, onShare, index = 0, animate = true, featuredPrice = false,
+}: {
+  project: ProjectCardData;
+  image?: string | null;
+  layout?: string;
+  priceLabel?: string;
+  priceFallback?: string;
+  manage?: boolean;
+  children?: ReactNode;
+  onShare?: (project: ProjectCardData) => void;
+  index?: number;
+  animate?: boolean;
+  featuredPrice?: boolean;
+}) {
+  const isSavitri = project.slug === SAVITRI_SLUG;
+  const flats = project.total_flats || project.total_units || (isSavitri ? 20 : null);
+  const floors = project.total_floors || (isSavitri ? 4 : null);
+  const layoutName = layout || (isSavitri || project.slug === "27th" ? "3BHK" : project.slug === P_SHREE_SLUG ? "2 & 3 BHK" : "");
+  const facts = [
+    { label: "Flats", text: flats == null ? "" : `${flats.toLocaleString("en-IN")} Flats`, Icon: Home },
+    { label: "Floors", text: floors == null ? "" : `${String(floors).padStart(2, "0")} Floors`, Icon: Building2 },
+    { label: "Layout", text: layoutName, Icon: PanelsTopLeft },
+  ].filter(fact => fact.text);
+  const images = [...new Set([image, project.hero_banner_url, project.cover_url, project.thumbnail_url,
+    isSavitri ? "/images/savitri-enclave-facade.webp" : null]
+    .filter((url): url is string => Boolean(url)))];
+  const address = (project.location || project.address || (isSavitri ? "JP Chowk, Darbhanga" : ""))
+    .split(",").map(part => part.trim()).filter(Boolean).slice(0, 2).join(", ");
+  const price = startingPrice(project);
+  const amount = price === null ? null : formatINR(price, { compact: true }).replace(/^₹/, "").replace(/\.00(?= [LC])/, "");
+  const destination = manage
+    ? { to: "/admin/projects/$id", params: { id: project.id } } as const
+    : { to: "/projects/$slug", params: { slug: project.slug } } as const;
+
   return (
-    <div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
+    <article className={`listing-reference${animate ? " animate-fade-up" : ""}`}
+      style={animate ? { animationDelay: `${Math.min(index * 60, 300)}ms` } : undefined}>
+      <div className="listing-reference-photo">
+        <Link {...destination} className="listing-reference-image-link" aria-label={`View ${project.name}`}>
+          <ProjectPhoto key={JSON.stringify(images)} images={images} name={project.name} />
+        </Link>
+        <Link {...destination} className="listing-reference-open" aria-label={`${manage ? "Manage" : "Explore"} ${project.name}`}>
+          <Building aria-hidden="true" />
+        </Link>
+        {!manage && <WishlistButton name={project.name} />}
+        {onShare && (
+          <button type="button" className="listing-reference-share" aria-label="Share project" onClick={() => onShare(project)}>
+            <Share2 size={17} aria-hidden="true" />
+          </button>
+        )}
       </div>
-      <div className="mt-0.5 truncate text-sm font-extrabold text-foreground">{value}</div>
-    </div>
+      <div className="listing-reference-info">
+        <div className="listing-reference-heading">
+          <div className="listing-reference-title">
+            <h3><Link {...destination}>{project.name}</Link></h3>
+            {address && <p><MapPin size={14} aria-hidden="true" />{address}</p>}
+          </div>
+          <div className={`listing-reference-price${featuredPrice ? " listing-reference-price--featured" : ""}`}>
+            {amount !== null && <small>{priceLabel}</small>}
+            <strong>
+              {(amount !== null || featuredPrice) && (
+                <span className="listing-price-currency" aria-hidden={amount === null || undefined}>₹</span>
+              )}
+              {amount ?? priceFallback}
+            </strong>
+          </div>
+        </div>
+        {facts.length > 0 && (
+          <ul className="listing-reference-facts" aria-label="Property features">
+            {facts.map(({ label, text, Icon }) => <li key={label}><Icon aria-hidden="true" /><span>{text}</span></li>)}
+          </ul>
+        )}
+      </div>
+      {children && <div className="listing-reference-extra">{children}</div>}
+    </article>
   );
 }

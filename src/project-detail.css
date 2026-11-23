@@ -1018,7 +1018,7 @@ body .property-page .landing-header .property-header-brand > span > span:last-ch
 
 /* Project details */
 .property-content {
-  --property-section-gap: clamp(34px, 8.5vw, 78px);
+  --property-section-gap: clamp(40px, 9.5vw, 88px);
   --unit-available: #dcf0df;
   --unit-reserved: #fff0b9;
   --unit-sold: #f7d9d9;
@@ -1041,20 +1041,18 @@ body .property-page .landing-header .property-header-brand > span > span:last-ch
 .property-content .property-section-intro,
 .property-content .property-plan-heading,
 .property-content .property-amenity-heading { margin-bottom: clamp(10px,2.8vw,23px); }
-.property-content .property-section-intro { padding: 2px 0 3px 11px; border-left: 2px solid #9497a0; }
-.property-content .property-section-illustrated { padding-right: 18%; }
-.property-content .property-section-illustrated::after { opacity: .23; }
-.property-content .property-section-eyebrow { font-size: clamp(.56rem,1.65vw,.72rem); letter-spacing: .15em; }
-.property-content .property-section-intro .property-section-heading,
-.property-content :is(.property-plan-heading,.property-amenity-heading) h2,
-.property-content .property-location-copy h2,
-.property-content #tour h2 {
+.property-content .property-section-intro { padding: 0; border: 0; }
+.property-content .property-section-eyebrow { font-size: clamp(.6rem,1.65vw,.74rem); letter-spacing: .15em; }
+.property-content :is(.property-section-heading, .property-amenity-heading h2, .property-location-title) {
   margin: 0;
   color: var(--brand-charcoal);
-  font: 680 clamp(1.1rem,4.35vw,2rem)/1.15 Inter,sans-serif;
-  letter-spacing: -.04em;
+  font: 560 clamp(1.42rem,4.5vw,2.45rem)/1.12 "Fraunces", Georgia, serif;
+  letter-spacing: -.035em;
+  text-wrap: balance;
 }
-.property-content .property-amenity-heading h2 { padding-left: 9px; border-left: 2px solid #9497a0; }
+.property-content .property-section-heading em { color: var(--property-green); font: inherit; font-style: italic; }
+.property-content .property-amenity-heading h2 { padding: 0; border: 0; }
+.property-content .property-tour-copy h3 { display: flex; align-items: center; gap: .5rem; font: 650 1rem/1.25 Inter, sans-serif; }
 .property-content .property-section-description { margin-top: 5px; color: #585c51; font: 440 clamp(.71rem,2.1vw,.9rem)/1.42 Inter,sans-serif; }
 #gallery .property-section-description { color: #585c51; font: 440 clamp(.71rem,2.1vw,.9rem)/1.42 Inter,sans-serif; letter-spacing: normal; }
 .property-content .property-detail-section > .mt-4 { margin-top: 0; }
@@ -1078,23 +1076,79 @@ body .property-page .landing-header .property-header-brand > span > span:last-ch
 .property-content .property-inventory .property-unit:focus-visible { outline: 2px solid #474a40; outline-offset: 2px; }
 .property-location-panel {
   display: grid;
-  grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
-  min-height: 200px;
-  gap: clamp(10px,3vw,30px);
-  align-items: stretch;
-  padding: clamp(9px,2.5vw,19px);
-  border: 1px solid #e3e3e5;
-  border-radius: clamp(15px,4vw,24px);
-  background: #fff;
+  justify-items: center;
+  gap: clamp(10px, 2.4vw, 18px);
+  min-width: 0;
 }
-.property-location-copy { display: flex; flex-direction: column; align-items: start; justify-content: center; min-width: 0; padding: clamp(2px,1.8vw,12px); }
-.property-location-kicker { display: flex; gap: 4px; align-items: center; margin-bottom: 6px; color: #565a4f; font-size: clamp(.57rem,1.75vw,.78rem); font-weight: 680; }
-.property-location-kicker svg, .property-location-directions svg { flex: none; }
-.property-location-copy p { margin-top: 5px; color: #51535b; font-size: clamp(.68rem,2vw,.92rem); line-height: 1.46; overflow-wrap: anywhere; }
-.property-location-panel .property-location-directions { display: inline-flex; gap: 4px; min-height: 36px; margin: 5px 0 0; padding: 0; border: 0; background: transparent; font-size: clamp(.65rem,1.8vw,.88rem); }
-.property-location-map { width: 100%; height: clamp(190px,34vw,325px); min-width: 0; border: 1px solid #e3e4e6; border-radius: 13px; background: #e8ecdd; }
+.property-content .property-location-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 22px);
+  text-align: center;
+}
+.property-location-title::before,
+.property-location-title::after {
+  content: "";
+  width: clamp(20px, 6vw, 46px);
+  height: 1px;
+  background: var(--property-green);
+}
+.property-location-figure,
+.property-location-map {
+  width: 100%;
+  min-width: 0;
+}
+.property-location-figure > a { display: block; }
+.property-location-map {
+  display: block;
+  height: clamp(225px, 51vw, 410px);
+  object-fit: contain;
+  filter: grayscale(1);
+  background: #f3f3f3;
+  border: 1px solid #dfdfdf;
+  border-radius: clamp(13px, 3vw, 22px);
+}
+.property-location-figure figcaption {
+  margin-top: 6px;
+  color: #595c54;
+  font-size: .74rem;
+  text-align: right;
+}
+.property-location-figure figcaption a { text-decoration: underline; }
+.property-location-address {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  font: 560 clamp(.86rem, 2.5vw, 1.05rem)/1.45 Inter, sans-serif;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.property-location-address svg { flex: none; color: var(--property-green); }
+.property-location-panel .property-location-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin: 0;
+  font-size: .82rem;
+}
+.property-content .property-fact > * { grid-column: 1; justify-self: center; text-align: center; }
+.property-content .property-fact-icon { grid-row: 1; margin: 0; }
+.property-content .property-fact :is(dt, dd) { width: 100%; overflow-wrap: anywhere; }
+.property-content .property-amenity-grid li {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  justify-content: stretch;
+  gap: 6px;
+  padding: 9px 4px;
+  text-align: center;
+}
+.property-amenity-grid li strong { min-width: 0; font-weight: 575; }
+.property-content > .property-enquire-banner { margin-top: var(--property-section-gap); }
+
 @media (max-width: 440px) {
-  .property-location-panel { grid-template-columns: minmax(0,1fr) minmax(min(200px,62%),1.35fr); }
-  .property-location-map { min-height: 206px; }
   .property-status-legend strong { overflow-wrap: anywhere; }
 }

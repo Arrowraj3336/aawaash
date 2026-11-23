@@ -11,7 +11,10 @@ export function PShreePlans({ extra }: { extra: unknown }) {
   if (!tower) return null;
 
   return (
-    <section id="flats" className="property-plans p-shree-plans" aria-label="Tower plans">
+    <section id="flats" className="property-plans p-shree-plans" aria-labelledby="p-shree-plan-heading">
+      <header className="property-section-intro">
+        <h2 id="p-shree-plan-heading" className="property-section-heading">Tower <em>Plans</em></h2>
+      </header>
       <article className="property-plan-card" aria-label={tower.name}>
         <div className="property-plan-visual">
           {tower.image ? (

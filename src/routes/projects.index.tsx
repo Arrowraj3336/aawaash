@@ -140,7 +140,7 @@ function ProjectsPage() {
 
   return (
     <div className="portfolio-page relative min-h-screen">
-      <LandingNav editorial />
+      <LandingNav />
 
       <main className="mx-auto max-w-6xl px-4 pb-24 pt-24 sm:px-6 sm:pt-28">
         <section className="catalogue-heading" aria-labelledby="catalogue-title">

@@ -1039,7 +1039,7 @@ body:has(.aawaash-home) nav[aria-label="Primary"] {--primary:#677a3d;--primary-f
 .aawaash-home #how-it-works li:last-child {padding-bottom:5px;border-left-color:transparent;}
 .aawaash-home #faq [data-slot="accordion-item"],.aawaash-home #faq .glass-card > div > div {border:1px solid #e0e1e4;border-radius:10px;margin-bottom:9px;padding-inline:15px;background:#f7f8f5;}
 .aawaash-home #faq [data-state="open"] {background:#fff;}
-.aawaash-home #contact {background:linear-gradient(180deg,#fff,#f5f5f4) !important;border-top:1px solid #e6e7e3;}
+.aawaash-home #contact.future-contact {background:linear-gradient(180deg,#fff,#f5f5f4) !important;border-top:1px solid #e6e7e3;}
 .aawaash-home #contact .glass-card {border:1px solid #dedfdb;border-radius:8px 25px 8px 8px;background:#fff;box-shadow:0 5px 18px #677a3d04;}
 .aawaash-home #contact form.glass-card {border-top:2px solid #949a86;}
 .aawaash-home #contact input,.aawaash-home #contact textarea {background:#f7f8f5;border-color:#dedfdb;}

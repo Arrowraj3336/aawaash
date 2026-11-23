@@ -131,26 +131,27 @@ export function FlatInventoryBoard({ slug, projectName }: { slug: string; projec
       {filter !== "all" && visibleFlats.length === 0 && (
         <p className="property-inventory-note" role="status">No flats match this status.</p>
       )}
+      <p className="property-inventory-note">Select a tower or floor to view its flats.</p>
       {[...groupsByBuilding.values()].map(group => {
         const listedFloors = floors.filter(floor => floor.building_id === group.id && (filter === "all" || group.floors.has(floor.id)));
         const total = group.unassigned.length + listedFloors.reduce((sum, floor) => sum + (group.floors.get(floor.id)?.units.length ?? 0), 0);
         if (total === 0 && listedFloors.length === 0) return null;
         return (
-          <details className="property-inventory-building" key={group.id} open>
+          <details className="property-inventory-building" key={group.id}>
             <summary className="property-tower-heading"><Building2 size={22} aria-hidden="true" /><strong>{group.name}</strong><small>{total} {total === 1 ? "Flat" : "Flats"}</small><ChevronDown size={17} aria-hidden="true" /></summary>
             <p className="property-inventory-hint"><Info size={16} aria-hidden="true" /> Tap a flat to view details.</p>
-            {listedFloors.map((floor, index) => {
+            {listedFloors.map(floor => {
               const entry = group.floors.get(floor.id);
-              return <InventoryFloor key={`${filter}-${floor.id}`} name={entry?.name ?? (floor.name || `Floor ${floor.number}`)} units={entry?.units ?? []} initiallyOpen={index === 0} onSelect={setSelectedId} />;
+              return <InventoryFloor key={`${filter}-${floor.id}`} name={entry?.name ?? (floor.name || `Floor ${floor.number}`)} units={entry?.units ?? []} onSelect={setSelectedId} />;
             })}
             {group.unassigned.length > 0 && (
-              <InventoryFloor key={filter} name="Floor to be confirmed" units={group.unassigned} initiallyOpen={listedFloors.length === 0} onSelect={setSelectedId} />
+              <InventoryFloor key={filter} name="Floor to be confirmed" units={group.unassigned} onSelect={setSelectedId} />
             )}
           </details>
         );
       })}
       {unassigned.length > 0 && (
-        <InventoryFloor name="Other flats" units={unassigned} initiallyOpen onSelect={setSelectedId} />
+        <InventoryFloor name="Other flats" units={unassigned} onSelect={setSelectedId} />
       )}
       {data.source_note && <p className="property-inventory-note">{data.source_note}</p>}
       <FlatModal flat={selected} projectName={projectName} onClose={() => setSelectedId(null)} />
@@ -161,16 +162,14 @@ export function FlatInventoryBoard({ slug, projectName }: { slug: string; projec
 function InventoryFloor({
   name,
   units,
-  initiallyOpen,
   onSelect,
 }: {
   name: string;
   units: PublicFlat[];
-  initiallyOpen: boolean;
   onSelect: (id: string) => void;
 }) {
   return (
-    <details className="property-inventory-floor" open={initiallyOpen}>
+    <details className="property-inventory-floor">
       <summary>
         <Layers size={15} aria-hidden="true" />
         <span>{name}</span>

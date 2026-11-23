@@ -11,7 +11,6 @@ import { useWelcome, type WelcomeState } from "@/hooks/useWelcome";
 import { BrandMark } from "@/components/aawash/BrandMark";
 import { EcoGreeting } from "@/components/aawash/dashboard/EcoGreeting";
 import { EcoDock } from "@/components/aawash/dashboard/EcoDock";
-import ecoTowerWire from "@/assets/eco-tower-wire.png.asset.json";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -79,7 +78,7 @@ export function EcoShell({
         {/* ambient light + futuristic apartment wireframe */}
         {!architectural && <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
           <img
-            src={ecoTowerWire.url}
+            src="/images/eco-tower-wire.webp"
             alt=""
             className="absolute left-1/2 top-1/2 w-[min(140vw,1100px)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-10"
           />
@@ -625,60 +624,6 @@ export function TimelineRow({
         <div className="shrink-0 text-[12px] font-semibold text-muted-foreground">{right}</div>
       )}
     </li>
-  );
-}
-
-/** Compact project card with photo band + progress. */
-export function EcoProjectCard({
-  to,
-  name,
-  meta,
-  pct,
-  hue,
-  image,
-}: {
-  to: string;
-  name: string;
-  meta: string;
-  pct: number;
-  hue?: string;
-  image?: string | null;
-}) {
-  return (
-    <Link
-      to={to as never}
-      className="group relative flex h-[188px] w-full flex-col justify-end overflow-hidden rounded-[26px] p-3.5 shadow-[var(--shadow-soft)] transition-transform will-change-transform hover:-translate-y-1 active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {image ? (
-        <img
-          src={image}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      ) : (
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              hue && (hue.startsWith("#") || hue.startsWith("oklch") || hue.startsWith("rgb"))
-                ? `linear-gradient(140deg, ${hue}, color-mix(in oklab, ${hue} 45%, black))`
-                : `linear-gradient(140deg, color-mix(in oklab, var(--leaf) ${58 + (name.length % 5) * 8}%, var(--forest)), var(--forest-deep))`,
-          }}
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/90 via-forest-deep/35 to-transparent" />
-      <div className="relative">
-        <div className="truncate text-[13.5px] font-bold text-forest-foreground">{name}</div>
-        <div className="truncate text-[11px] font-light text-forest-foreground/75">{meta}</div>
-        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/25">
-          <span
-            className="block h-full rounded-full bg-leaf transition-[width] duration-700"
-            style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
-          />
-        </div>
-      </div>
-    </Link>
   );
 }
 

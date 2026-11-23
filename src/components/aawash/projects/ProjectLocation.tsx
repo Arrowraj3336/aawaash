@@ -1,4 +1,5 @@
 import { ExternalLink, MapPin } from "lucide-react";
+import savitriMap from "@/assets/savitri-location.jpg";
 
 function googleMapsLink(project: Record<string, unknown>, query: string) {
   if (typeof project.google_map_url === "string") {
@@ -41,29 +42,62 @@ function projectMapQuery(project: Record<string, unknown>, address: string) {
   return [project.name, address].filter(Boolean).join(", ");
 }
 
+const projectMapImages: Record<string, { area: RegExp; src: string; caption: string }> = {
+  "27th": {
+    area: /mabbi|kamtaul/i,
+    src: "/projects/27th-avenue/location-map.webp",
+    caption: "27th Avenue location map from the project brochure",
+  },
+  "savitri-enclave": {
+    area: /jp chowk|bhagwan das/i,
+    src: savitriMap,
+    caption: "Savitri Enclave location map from the project brochure",
+  },
+  "p-shree": {
+    area: /chandan\s*patti/i,
+    src: "/projects/p-shree/chandanpatti-area.webp",
+    caption: "Chandanpatti area · Approximate location",
+  },
+};
+
 export function ProjectLocation({ project }: { project: Record<string, unknown> }) {
   const address = String(project.address || project.location || "");
   const query = projectMapQuery(project, address);
   const name = String(project.name || "this project");
+  const slug = String(project.slug || "");
+  const photo = projectMapImages[slug];
+  const hasCustomPin = Boolean(project.google_map_url) || (query !== [project.name, address].filter(Boolean).join(", "));
+  const snapshot = !hasCustomPin && photo?.area.test(address) ? photo : undefined;
+  const directions = googleMapsLink(project, query);
 
   return (
     <div className="property-location-panel">
-      <div className="property-location-copy">
-        <span className="property-location-kicker"><MapPin size={15} aria-hidden="true" /> Neighbourhood</span>
-        <h2>Location</h2>
-        {address && <p>{address}</p>}
-        <a className="property-location-directions" href={googleMapsLink(project, query)} target="_blank" rel="noreferrer">
+      <h2 className="property-location-title">Location</h2>
+      {snapshot ? (
+        <figure className="property-location-figure">
+          <a href={directions} target="_blank" rel="noreferrer" aria-label={`Open directions for ${name}`}>
+            <img className="property-location-map" src={snapshot.src} alt={snapshot.caption} loading="lazy" decoding="async" />
+          </a>
+          {slug === "p-shree" && (
+            <figcaption>{snapshot.caption} · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a></figcaption>
+          )}
+        </figure>
+      ) : query && (
+        <iframe
+          className="property-location-map"
+          title={`Google Maps location for ${name}`}
+          src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`}
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      )}
+      {address && <p className="property-location-address"><MapPin size={19} aria-hidden="true" /><span>{address}</span></p>}
+      {query && (
+        <a className="property-location-directions" href={directions} target="_blank" rel="noreferrer">
           Open in Google Maps <ExternalLink size={14} aria-hidden="true" />
         </a>
-      </div>
-      {query && <iframe
-        className="property-location-map"
-        title={`Google Maps location for ${name}`}
-        src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`}
-        loading="lazy"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />}
+      )}
     </div>
   );
 }

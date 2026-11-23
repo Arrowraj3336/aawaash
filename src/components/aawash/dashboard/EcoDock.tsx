@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Building2, Users, TrendingUp, Wallet, User } from "lucide-react";
+import { Home, Building2, DollarSign, Wallet, User } from "lucide-react";
 
 import { SplitDock } from "@/components/aawash/SplitDock";
 import type { AppRole } from "@/lib/auth";
@@ -33,11 +33,10 @@ export function ecoDockItems(role: AppRole): EcoDockItem[] {
         activePrefix: "/leader/projects",
       },
       {
-        key: "members",
-        label: "Members",
-        icon: Users,
-        to: "/leader/members",
-        activePrefix: "/leader/members",
+        key: "commission",
+        label: "Commission",
+        icon: DollarSign,
+        to: "/commission-earnings",
       },
       {
         key: "wallet",
@@ -65,11 +64,10 @@ export function ecoDockItems(role: AppRole): EcoDockItem[] {
       activePrefix: "/member/projects",
     },
     {
-      key: "sales",
-      label: "Sales",
-      icon: TrendingUp,
-      to: "/member/sales",
-      activePrefix: "/member/sales",
+      key: "commission",
+      label: "Commission",
+      icon: DollarSign,
+      to: "/commission-earnings",
     },
     {
       key: "wallet",
@@ -96,13 +94,9 @@ function isActive(pathname: string, item: EcoDockItem) {
   return pathname === item.to;
 }
 
-export function EcoDock({ role, architectural = false }: { role: AppRole; architectural?: boolean }) {
+export function EcoDock({ role }: { role: AppRole }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const items = ecoDockItems(role).map(item =>
-    architectural && role === "member" && item.key === "sales"
-      ? { key: "members", label: "Members", icon: Users, to: "/member/leaderboard" }
-      : item,
-  );
+  const items = ecoDockItems(role);
 
   return (
     <nav
@@ -118,7 +112,6 @@ export function EcoDock({ role, architectural = false }: { role: AppRole; archit
             <li key={item.key} className="flex min-w-0 flex-1">
               <Link
                 to={item.to}
-                preload="render"
                 aria-label={item.label}
                 title={item.label}
                 aria-current={active ? "page" : undefined}
