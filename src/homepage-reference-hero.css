@@ -1,0 +1,227 @@
+#aawaash-home #home.reference-opening-hero {
+  min-height: 0;
+  padding: 0;
+  background: #fff;
+  color: #171b13;
+}
+
+.reference-hero-stage {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  min-height: clamp(720px, 67vw, 1080px);
+  overflow: hidden;
+  background: #fff;
+}
+
+.reference-hero-art {
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0 auto;
+  width: min(64%, 980px);
+  aspect-ratio: 1 / 2;
+}
+
+.reference-hero-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+}
+
+.reference-hero-content {
+  position: relative;
+  width: min(52%, 720px);
+  margin-left: 6%;
+  padding-top: clamp(169px, 19.3vw, 300px);
+}
+
+.reference-hero-eyebrow {
+  margin: 0 0 1.8em;
+  color: #344820;
+  font-size: clamp(10px, 1.1cqw, 17px);
+  letter-spacing: .18em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+#aawaash-home #home.reference-opening-hero h1 {
+  margin: 0;
+  max-width: none;
+  color: #151712;
+  font: 600 clamp(50px, 6.4cqw, 108px)/.98 "Fraunces", Georgia, serif;
+  letter-spacing: -.062em;
+  text-wrap: initial;
+}
+
+#aawaash-home #home.reference-opening-hero h1 span {
+  display: block;
+  color: #405a24;
+  font: inherit;
+  font-style: italic;
+}
+
+.reference-hero-description {
+  max-width: 16em;
+  margin: 1.35em 0 2em;
+  color: #22251f;
+  font-size: clamp(16px, 1.75cqw, 26px);
+  line-height: 1.35;
+}
+
+.reference-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  min-height: 44px;
+  padding: .65em 1.4em;
+  border-radius: 50px;
+  background: #405a24;
+  color: #fff;
+  font-size: clamp(14px, 1.55cqw, 24px);
+  white-space: nowrap;
+  transition: background-color .2s ease;
+}
+
+.reference-hero-cta:hover { background: #31471b; }
+.reference-hero-cta svg { width: 1.2em; height: 1.2em; }
+
+#aawaash-home #home.reference-opening-hero .future-services {
+  margin: 0 6%;
+  border-color: #d7ddcd;
+}
+
+#aawaash-home #home.reference-opening-hero .future-services strong { color: #252729; }
+#aawaash-home #home.reference-opening-hero .future-services p,
+#aawaash-home #home.reference-opening-hero .future-service-icon { color: #4d603a; }
+
+#aawaash-home #home.reference-opening-hero .hero-search-panel {
+  width: 88%;
+  margin: 0 auto;
+}
+
+#aawaash-home #home.reference-opening-hero .hero-search-panel > summary { color: #405a24; }
+
+@media (max-width: 800px) {
+  .reference-hero-stage { min-height: 0; width: 100%; height: 100svh; }
+  .reference-hero-art { width: 100%; height: 100%; inset: 0; aspect-ratio: auto; }
+  .reference-hero-art img { object-fit: fill; }
+  .reference-hero-content { width: 88%; padding-top: max(89px, 19.5svh); }
+  .reference-hero-eyebrow { font-size: 2.15cqw; margin-bottom: 4.2cqw; }
+  #aawaash-home #home.reference-opening-hero h1 { font-size: min(10.2cqw, 5.1svh); }
+  .reference-hero-description { font-size: 3.4cqw; margin: 4.5cqw 0 7cqw; }
+  .reference-hero-cta { font-size: 3.45cqw; min-height: 44px; padding-inline: 5cqw 4cqw; }
+}
+
+.reference-amenities {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  gap: 6px;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reference-amenities li {
+  display: grid;
+  grid-template-columns: 17px auto;
+  align-items: center;
+  gap: 7px;
+  color: #354b24;
+}
+
+.reference-amenities svg { width: 17px; height: 17px; }
+.reference-amenities span { font-size: 10px; font-weight: 600; line-height: 1.2; }
+
+@media (max-width: 800px) {
+  .reference-hero-description { margin-bottom: 3cqw; }
+}
+
+#aawaash-home #projects.home-featured-projects {
+  max-width: none;
+  padding: clamp(38px, 6vw, 74px) max(16px, calc((100% - 720px) / 2));
+  background: transparent;
+  isolation: isolate;
+}
+
+#projects.home-featured-projects::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 12px auto auto 0;
+  width: clamp(150px, 32vw, 430px);
+  aspect-ratio: 3 / 4;
+  background: url("/images/home/construction-linework.svg") left top / contain no-repeat;
+  opacity: .09;
+  pointer-events: none;
+}
+
+#aawaash-home :is(#projects, #living-spaces) .future-project-intro {
+  margin-bottom: clamp(22px, 4vw, 36px);
+  text-align: center;
+}
+
+.listing-section-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  color: #546646;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
+
+.listing-section-eyebrow::before,
+.listing-section-eyebrow::after {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: .6;
+}
+
+#aawaash-home :is(#projects, #living-spaces) .future-project-intro h2 {
+  margin: 16px 0 0;
+  color: #20271e;
+  font: 650 clamp(28px, 4.5vw, 46px)/1.12 system-ui, sans-serif;
+  letter-spacing: -.045em;
+}
+
+#aawaash-home :is(#projects, #living-spaces) .future-project-intro h2 span { color: #486039; }
+
+#aawaash-home .reference-hero-services {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 940px;
+  margin: clamp(22px, 4vw, 44px) auto clamp(16px, 3vw, 28px);
+  padding: 0 4%;
+  list-style: none;
+}
+.reference-hero-services li {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: clamp(7px, 1.5vw, 13px);
+  min-height: clamp(58px, 9vw, 108px);
+  padding: 6px 4px;
+  text-align: center;
+  color: #252729;
+}
+.reference-hero-services li + li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 24%;
+  bottom: 24%;
+  width: 1px;
+  background: #677a3d38;
+}
+.reference-hero-services svg { width: clamp(20px, 3.4vw, 34px); height: auto; color: #536343; }
+.reference-hero-services strong { font: 530 clamp(10px, 2.75vw, 17px)/1.2 system-ui, sans-serif; }

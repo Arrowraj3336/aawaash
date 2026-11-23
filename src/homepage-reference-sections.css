@@ -1,0 +1,356 @@
+#aawaash-home main > section.home-reference-section {
+  position: relative;
+  max-width: none;
+  padding: 0;
+  isolation: isolate;
+  background: var(--reference-paper);
+  color: var(--reference-ink, #1c2111);
+  font-family: Inter, "Plus Jakarta Sans", Arial, sans-serif;
+}
+
+.home-reference-section .home-reference-inner {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+  container-type: inline-size;
+}
+
+#aawaash-home .home-reference-section .home-reference-kicker {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  margin: 0;
+  font-size: clamp(.66rem, 2.18cqw, 1.55rem);
+  font-weight: 650;
+  letter-spacing: .23em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+#aawaash-home main > section.home-reference-section h2 {
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: -.045em;
+}
+
+#aawaash-home main > section.home-reference-section h2::after {
+  content: none;
+}
+
+.home-reference-section .home-reference-description {
+  color: #4b4b47;
+  font-size: clamp(.94rem, 2.85cqw, 1.95rem);
+  line-height: 1.26;
+}
+
+.home-lifestyle {
+  --reference-paper: #f9f6f5;
+}
+
+.home-lifestyle .home-reference-inner {
+  padding-block: clamp(3rem, 12vw, 7.8rem) clamp(3rem, 8vw, 5.6rem);
+}
+
+.home-lifestyle-copy {
+  position: relative;
+  z-index: 1;
+  padding-inline: 5.85cqw;
+}
+
+.home-lifestyle-copy .home-reference-description {
+  max-width: 42ch;
+  margin: 1rem auto 0;
+  font-size: clamp(.92rem, 2cqw, 1.25rem);
+}
+
+.home-lifestyle-art {
+  display: block;
+  width: 95.3%;
+  height: auto;
+  margin: -2.5cqw 1.75% 0 2.95%;
+  mix-blend-mode: multiply;
+}
+
+.home-amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-items: center;
+  gap: 4.2cqw 3.3cqw;
+  margin: 2.6cqw auto 0;
+  padding: 0;
+  width: 82%;
+  list-style: none;
+  text-align: center;
+}
+
+.home-amenities-grid li {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: .65cqw;
+  font-size: clamp(.92rem, 3cqw, 2rem);
+  font-weight: 550;
+}
+
+.home-amenities-grid svg {
+  width: clamp(2.25rem, 8.4cqw, 5.1rem);
+  height: clamp(1.95rem, 6.3cqw, 4rem);
+  color: var(--reference-olive, #586337);
+}
+
+.home-amenities-grid p {
+  margin: 0;
+  color: #4b4b47;
+  font-size: .72em;
+  font-weight: 400;
+}
+
+.home-faq {
+  --reference-paper: #f8f9f5;
+}
+
+.home-faq .home-reference-inner {
+  width: min(100%, 52rem);
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+.home-faq-intro {
+  position: relative;
+  min-height: clamp(6.3rem, 21cqw, 10.25rem);
+  padding-inline: 4.65cqw;
+}
+
+.home-faq-copy {
+  position: relative;
+  z-index: 1;
+  width: 68%;
+}
+
+.home-faq .home-reference-kicker {
+  color: var(--reference-olive, #586337);
+}
+
+#aawaash-home main > section.home-faq h2 {
+  margin-top: clamp(.55rem, 1.75cqw, .9rem);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.55rem, 5.4cqw, 2.85rem);
+  font-weight: 400;
+  line-height: 1.02;
+}
+
+.home-faq-art {
+  position: absolute;
+  inset: -2cqw 3cqw auto auto;
+  width: 31%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: right top;
+  opacity: .67;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.home-faq-list {
+  margin: 0 4.65cqw;
+  border: 1px solid #dce2d5;
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.home-faq-list > div + div { border-top: 1px solid #e5e9df; }
+
+#aawaash-home #faq h3 .home-faq-question {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .9rem;
+  width: 100%;
+  min-height: 44px;
+  padding: .68rem clamp(.75rem, 3cqw, 1.3rem);
+  cursor: pointer;
+  color: var(--reference-ink, #1c2111);
+  font-family: inherit;
+  font-size: clamp(.94rem, 2.2cqw, 1.12rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1.32;
+  text-align: left;
+}
+
+.home-faq-question svg {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: .43rem;
+  border-radius: 50%;
+  background: #edf1e8;
+  color: var(--reference-olive, #586337);
+}
+
+.home-faq-question[data-state="open"] svg path:last-child {
+  visibility: hidden;
+}
+
+#aawaash-home #faq .home-faq-answer {
+  max-width: 65ch;
+  padding: 0 clamp(.75rem, 3cqw, 1.3rem) .9rem;
+  background: transparent;
+  color: #4b4b47;
+  font-size: clamp(.86rem, 2cqw, 1.06rem);
+  line-height: 1.55;
+}
+
+.home-contact {
+  --reference-paper: #f7f8f3;
+  --reference-olive: #526441;
+  --reference-ink: #1a1b1b;
+}
+
+.home-contact .home-reference-inner {
+  width: min(100%, 48rem);
+  padding: clamp(1.9rem, 5vw, 3.6rem) 0 1.75rem;
+}
+
+.home-contact-intro {
+  position: relative;
+  min-height: 30cqw;
+  padding-inline: 7.15cqw;
+}
+
+.home-contact-intro > div {
+  position: relative;
+  z-index: 1;
+  max-width: 44cqw;
+}
+
+.home-contact .home-reference-kicker::after {
+  width: 8.3cqw;
+  border-bottom: 1px solid var(--reference-olive, #586337);
+  content: "";
+}
+
+#aawaash-home main > section.home-contact h2 {
+  margin-top: 3.5cqw;
+  font-size: clamp(1.45rem, 5.4cqw, 2.8rem);
+  line-height: 1.06;
+}
+
+#aawaash-home .home-contact h2 em {
+  display: block;
+  color: var(--reference-olive, #586337);
+  font: inherit;
+  font-style: italic;
+}
+
+.home-contact-intro .home-reference-description {
+  max-width: 38cqw;
+  font-size: clamp(.83rem, 2.25cqw, 1.05rem);
+  margin: 3.55cqw 0 0;
+}
+
+.home-contact-art {
+  position: absolute;
+  top: -2.6cqw;
+  right: 2.57cqw;
+  width: 39%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.home-contact-details {
+  display: grid;
+  gap: clamp(.8rem, 2.5cqw, 1.25rem);
+  margin: 2.5cqw 7.15cqw 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-contact-row {
+  display: grid;
+  grid-template-columns: clamp(2.7rem, 10cqw, 4rem) minmax(0, 1fr);
+  align-items: center;
+}
+
+.home-contact-icon {
+  display: grid;
+  place-items: center;
+  color: var(--reference-olive, #586337);
+}
+
+.home-contact-icon svg {
+  width: clamp(1.25rem, 4cqw, 1.9rem);
+  height: auto;
+}
+
+.home-contact-value {
+  display: grid;
+  gap: .75cqw;
+  padding-inline-start: clamp(.75rem, 2.4cqw, 1rem);
+  border-inline-start: 1px solid #879073;
+  overflow-wrap: anywhere;
+}
+
+.home-contact-value span {
+  font-size: clamp(.65rem, 1.8cqw, .78rem);
+  font-weight: 550;
+  letter-spacing: .09em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #4b4b47;
+}
+
+.home-contact-value :is(strong, a) {
+  width: fit-content;
+  font-size: clamp(.93rem, 2.8cqw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  line-height: 1.22;
+}
+
+.home-contact-value a:hover {
+  text-decoration: underline;
+}
+
+.home-contact-enquiry {
+  margin: 4cqw 7.15cqw 0;
+  color: var(--reference-olive, #586337);
+}
+
+.home-contact-enquiry summary {
+  width: fit-content;
+  min-height: 44px;
+  padding-block: .65rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.home-reference-section :is(a, button, summary):focus-visible {
+  outline: 2px solid var(--reference-olive, #586337);
+  outline-offset: 4px;
+}
+
+@media (max-width: 520px) {
+  .home-lifestyle-art {
+    margin-top: -.9cqw;
+  }
+
+
+}
+
+
+#aawaash-home main > section.home-residences-banner {
+  --reference-paper: #fafbfb;
+  padding-block: clamp(.55rem, 2vw, 1.3rem);
+}
+
+.home-residences-banner a {
+  display: block;
+  width: min(100%, 60rem);
+  margin-inline: auto;
+}
+
+.home-residences-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

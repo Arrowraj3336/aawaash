@@ -234,7 +234,7 @@ function ProjectDetailPage() {
 
   return (
     <div className={`property-page ${slug === "27th" ? "avenue-page" : ""} relative min-h-screen pb-24 sm:pb-0`}>
-      <LandingNav editorial project />
+      <LandingNav project />
 
       <main className="property-content mx-auto">
         {isError ? (
@@ -301,8 +301,7 @@ function ProjectDetailPage() {
 
             {/* AVAILABILITY (seatmap) */}
             <section id="availability" className="property-detail-section scroll-mt-24">
-              <SectionHeader title="Availability" eyebrow={String(p.name)} description="See live status of every flat by floor." illustration />
-              {facts}
+              <SectionHeader title="Availability" eyebrow={String(p.name)} description="Find live availability by tower and floor." />
               {pShreeContent?.availabilityNote && <p className="property-inventory-note mb-3">{pShreeContent.availabilityNote}</p>}
               <FlatInventoryBoard key={slug} slug={slug} projectName={p.name as string} />
             </section>
@@ -327,6 +326,7 @@ function ProjectDetailPage() {
 
             {/* 3D MODEL */}
             {hasTour && <section id="tour" className="property-detail-section scroll-mt-24">
+              <SectionHeader title="Explore in 3D" />
               <div className="mt-4">
                 <TourPanel key={modelUrl || walkthrough} modelUrl={modelUrl} walkthrough={walkthrough} isGlb={isGlb} heroPhoto={heroPhoto} />
                 {slug === "27th" && <p className="brochure-model-note">Exterior reconstructed from brochure images. Dimensions and unseen details are approximate.</p>}
@@ -335,9 +335,7 @@ function ProjectDetailPage() {
 
             {/* LOCATION */}
             <section id="location" className="property-detail-section scroll-mt-24">
-              <div className="mt-4">
-                <ProjectLocation project={p} />
-              </div>
+              <ProjectLocation project={p} />
             </section>
 
             {/* Desktop CTAs */}
@@ -408,7 +406,7 @@ function ProjectAmenities({ amenities }: { amenities: string[] }) {
       <ul id="property-amenities-list" className="property-amenity-grid">
         {(expanded ? unique : unique.slice(0, 8)).map(amenity => {
           const Icon = amenityIcon(amenity);
-          return <li key={amenity}><span><Icon size={25} strokeWidth={1.55} aria-hidden="true" /></span>{amenity}</li>;
+          return <li key={amenity}><span><Icon size={25} strokeWidth={1.55} aria-hidden="true" /></span><strong>{amenity}</strong></li>;
         })}
       </ul>
     </section>
@@ -445,7 +443,7 @@ function FlatShowcase({ flats, loading }: { flats: ReturnType<typeof getPublicPr
   const flat = flats[index];
   if (!flat) return (
     <section id="flats" className="property-plans">
-      <div className="property-plan-heading"><h2>Choose your plan</h2></div>
+      <div className="property-plan-heading"><SectionHeader title={<>Choose <em>Your Plan</em></>} /></div>
       <p className="text-sm text-muted-foreground">{loading ? "Loading floor plans…" : "Floor plans will appear here when released."}</p>
     </section>
   );
@@ -572,7 +570,7 @@ function TourPanel({ modelUrl, walkthrough, isGlb, heroPhoto }: { modelUrl: stri
         <div className="property-tour-poster">
           {heroPhoto && <div className="property-tour-art"><img src={heroPhoto} alt="" loading="lazy" decoding="async" /><span aria-hidden="true">360°</span></div>}
           <div className="property-tour-copy">
-            <h2><Box size={26} aria-hidden="true" /> 3D Tour / Virtual Tour</h2>
+            <h3><Box size={22} aria-hidden="true" /> Virtual Tour</h3>
             <p>Explore the project in an immersive 3D experience.</p>
             {modelUrl ? <button type="button" onClick={() => setOpened(true)} className="property-pill-action">Open Tour <ArrowRight size={18} aria-hidden="true" /></button>
               : <a href={source} target="_blank" rel="noreferrer" className="property-pill-action">Open Tour <ArrowRight size={18} aria-hidden="true" /></a>}

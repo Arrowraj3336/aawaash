@@ -1,15 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { ProjectCard, type ProjectCardData } from "@/components/aawash/projects/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Check, ChevronRight, Home, Layers } from "lucide-react";
+import { Check, Home, Layers } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getProjectFlats, type ProjectFlatCard } from "@/lib/project-flats";
 
-type ProjectLike = {
-  id: string;
-  name: string;
-  slug: string;
-  location?: string | null;
-  total_flats?: number | null;
+type ProjectLike = ProjectCardData & {
   available_flats?: number | null;
   reserved_flats?: number | null;
   sold_flats?: number | null;
@@ -44,29 +39,11 @@ export function ProjectFlatsSnapshot({ projects }: { projects: ProjectLike[] }) 
 function ProjectFlatsRow({ project }: { project: ProjectLike }) {
   const flats = getProjectFlats(project.extra);
   const available = Number(project.available_flats ?? 0);
-  const total = Number(project.total_flats ?? 0);
   const reserved = Number(project.reserved_flats ?? 0);
   const sold = Number(project.sold_flats ?? 0);
 
   return (
-    <div className="min-w-0 rounded-[22px] border border-border/70 bg-surface-warm p-3">
-      <Link
-        to="/projects/$slug"
-        params={{ slug: project.slug }}
-        className="flex min-h-14 items-center gap-3 rounded-2xl px-1 transition-transform active:scale-[0.98]"
-      >
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary">
-          <Building2 size={18} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-bold text-foreground">{project.name}</div>
-          <div className="truncate text-xs text-muted-foreground">
-            {available} of {total} available{project.location ? ` · ${project.location}` : ""}
-          </div>
-        </div>
-        <ChevronRight size={18} className="shrink-0 text-muted-foreground" />
-      </Link>
-
+    <ProjectCard project={project} animate={false}>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold">
         <Status label="Available" value={available} tone="text-success" />
         <Status label="Reserved" value={reserved} tone="text-warning" />
@@ -81,7 +58,7 @@ function ProjectFlatsRow({ project }: { project: ProjectLike }) {
           <FlatPlan key={`${project.id}-${flat.title}`} flat={flat} />
         ))}
       </Rail>
-    </div>
+    </ProjectCard>
   );
 }
 

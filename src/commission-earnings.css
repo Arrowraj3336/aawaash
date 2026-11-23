@@ -1,0 +1,63 @@
+.commission-earnings-page {
+  min-height: 100dvh;
+  padding: clamp(6rem, 10vw, 8rem) 0 6rem;
+}
+
+.commission-earnings-page main > h1 {
+  margin: 0 auto;
+  padding: 0 1rem;
+  color: var(--brand-charcoal-deep);
+  font: 650 clamp(1.35rem, 3.5vw, 2.2rem)/1.15 Inter, sans-serif;
+  letter-spacing: -.04em;
+  text-align: center;
+}
+
+.commission-earnings-guide {
+  display: grid;
+  gap: clamp(2rem, 6vw, 4rem);
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1rem clamp(1rem, 5vw, 2.25rem);
+}
+
+.commission-earnings-guide h2 {
+  margin: 0 0 .8rem;
+  font: 500 clamp(1.4rem, 4.5vw, 2rem)/1.15 Georgia, serif;
+}
+
+.commission-earnings-guide :is(ol, dl) {
+  display: grid;
+  gap: .75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commission-earnings-guide :is(li, dl > div) {
+  padding: 1rem;
+  border: 1px solid #dce1d4;
+  border-radius: .9rem;
+  background: #f7f8f4;
+}
+
+.commission-earnings-guide svg {
+  color: var(--brand-olive);
+  margin-bottom: .55rem;
+}
+
+.commission-earnings-guide :is(h3, dt) {
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.commission-earnings-guide :is(p, dd) {
+  margin: .35rem 0 0;
+  color: #525747;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .commission-earnings-guide ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .commission-earnings-guide dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

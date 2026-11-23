@@ -6,7 +6,7 @@ describe("homepage content merging", () => {
     const saved = mergeHomepage({ hero: { items: [], copy: { action: "Browse homes" } }, footer: { enabled: false } });
     expect(saved.hero.items).toEqual([]);
     expect(saved.hero.copy?.action).toBe("Browse homes");
-    expect(saved.hero.copy?.searchLabel).toBe("Search projects");
+    expect(saved.hero.copy?.searchLabel).toBe("Find a Flat");
     expect(saved.footer.enabled).toBe(false);
   });
 
@@ -16,7 +16,7 @@ describe("homepage content merging", () => {
     });
 
     expect(result.hero.image).toBe("https://example.com/real-building.png");
-    expect(result.hero.title).toBe("More Than Just A");
+    expect(result.hero.title).toBe("We Build Where");
     expect(result.projects.enabled).toBe(true);
   });
 });

@@ -11,7 +11,7 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultViewTransition: {
       types: ({ fromLocation, pathChanged }) =>
-        fromLocation && pathChanged && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        fromLocation && pathChanged && window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)").matches
           ? ["aawaash-navigation"]
           : false,
     },

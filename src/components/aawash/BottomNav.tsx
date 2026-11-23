@@ -10,6 +10,7 @@ import {
   UserCog,
   PhoneCall,
   LayoutDashboard,
+  DollarSign,
 } from "lucide-react";
 import { SplitDock } from "./SplitDock";
 import type { AppRole } from "@/lib/auth";
@@ -205,7 +206,7 @@ function leaderItems(): NavItem[] {
   return [
     { ...HOME, to: "/leader", exact: true, description: "Team leader home" },
     { key: "projects", label: "Projects", icon: Building2, to: "/leader/projects", activePrefix: "/leader/projects", description: "Team projects" },
-    { key: "members", label: "Members", icon: Users, to: "/leader/members", activePrefix: "/leader/members", description: "Your team members" },
+    { key: "commission", label: "Commission", icon: DollarSign, to: "/commission-earnings", description: "Commission earnings and slabs" },
     { key: "wallet", label: "Wallet", icon: Wallet, to: "/leader/withdrawals", activePrefix: "/leader/withdrawals", description: "Wallet and withdrawals" },
     { key: "account", label: "Account", icon: User, to: "/leader/profile", activePrefix: "/leader/profile", description: "Leader profile" },
   ];
@@ -215,7 +216,7 @@ function memberItems(): NavItem[] {
   return [
     { ...HOME, to: "/member", exact: true, description: "Member home" },
     { key: "projects", label: "Projects", icon: Building2, to: "/projects", activePrefix: "/projects", description: "Browse residences" },
-    { key: "sales", label: "Sales", icon: TrendingUp, to: "/member/sales", activePrefix: "/member/sales", description: "Your sales" },
+    { key: "commission", label: "Commission", icon: DollarSign, to: "/commission-earnings", description: "Commission earnings and slabs" },
     { key: "wallet", label: "Wallet", icon: Wallet, to: "/member/wallet", activePrefix: "/member/wallet", description: "Your wallet" },
     { key: "account", label: "Account", icon: User, to: "/member/profile", activePrefix: "/member/profile", description: "Your account" },
   ];

@@ -1,0 +1,180 @@
+.listing-reference {
+  --listing-radius: clamp(22px, 4vw, 36px);
+  padding: clamp(8px, 1.8vw, 15px);
+  border: 1px solid #e2e7dc;
+  border-radius: var(--listing-radius);
+  background: white;
+  box-shadow: 0 8px 24px #38452a0c;
+}
+
+.listing-reference-photo {
+  position: relative;
+  aspect-ratio: 2.06;
+}
+
+.listing-reference-image-link,
+.listing-reference-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--listing-radius) - 7px) calc(var(--listing-radius) - 7px) 16px 16px;
+  object-fit: cover;
+}
+
+.listing-reference-open,
+.listing-reference-wish {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  border-radius: 50%;
+  color: #263023;
+  background: #fff;
+  border: 1px solid #e5ebde;
+}
+
+.listing-reference-open {
+  bottom: 5%;
+  left: 3%;
+  width: clamp(44px, 8vw, 58px);
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 14px;
+  color: #34472d;
+  box-shadow: 0 4px 16px #29371d25;
+}
+
+.listing-reference-open:hover { background: #f1f5eb; }
+.listing-reference-open svg { width: 48%; height: 48%; stroke-width: 1.65; }
+.listing-reference-wish { top: 10px; right: 10px; width: 38px; height: 38px; }
+.listing-reference-wish[aria-pressed="true"] { color: #64294e; }
+
+.listing-reference-info { padding: clamp(12px, 2.4vw, 22px) clamp(6px, 1.5vw, 14px) 4px; }
+
+.listing-reference-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+}
+
+.listing-reference .listing-reference-heading h3 {
+  margin: 0;
+  color: #20271e;
+  font: 650 clamp(17px, 3.8vw, 29px)/1.2 system-ui, sans-serif;
+  letter-spacing: -.028em;
+  overflow-wrap: anywhere;
+}
+
+.listing-reference .listing-reference-heading h3 a { color: inherit; }
+
+.listing-reference-title p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 5px 0 0;
+  color: #5d6757;
+  font-size: clamp(11px, 2.4vw, 15px);
+}
+
+.listing-reference-title p svg { flex-shrink: 0; }
+
+.listing-reference-price {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  color: #34472d;
+  text-align: right;
+}
+
+.listing-reference-price small {
+  color: #5d6757;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.listing-reference-price strong {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .1em;
+  color: #2d4327;
+  font: 700 clamp(16px, 3.6vw, 26px)/1.08 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.035em;
+  white-space: nowrap;
+}
+
+.listing-price-currency { font-size: .82em; font-weight: 550; color: #4e6244; }
+
+.listing-reference-facts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 10px 0 3px;
+  border-top: 1px solid #e6eadf;
+  list-style: none;
+}
+
+.listing-reference-facts > li {
+  display: flex;
+  min-width: 0;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(4px, 1.4vw, 10px);
+  padding: 8px 3px;
+}
+
+.listing-reference-facts > li + li { border-left: 1px solid #e6eadf; }
+.listing-reference-facts svg { width: clamp(17px, 4.3vw, 27px); height: auto; flex-shrink: 0; color: #4d653e; stroke-width: 1.65; }
+.listing-reference-facts span { color: #252c22; font-size: clamp(10px, 2.7vw, 16px); font-weight: 650; font-variant-numeric: tabular-nums; }
+
+.listing-reference { container-type: inline-size; }
+.listing-reference-photo > .listing-reference-image-link {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #eef2e9;
+}
+.listing-reference-placeholder { width: 27px; height: 27px; color: #64745a; }
+.listing-reference-share {
+  position: absolute;
+  top: 10px;
+  right: 56px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  background: white;
+  color: #263023;
+}
+.listing-reference-extra { margin: 10px 6px 0; padding: 10px 0 3px; border-top: 1px solid #e6eadf; }
+
+@container (max-width: 290px) {
+  .listing-reference-heading { gap: 6px; }
+  .listing-reference .listing-reference-heading h3 { font-size: 16px; }
+  .listing-reference-price strong { font-size: 14px; }
+  .listing-reference-facts span { font-size: 10px; }
+  .listing-reference-facts svg { width: 16px; }
+}
+
+.listing-reference-price--featured strong {
+  align-items: center;
+  gap: .3em;
+  font: 600 clamp(15px, 4.4vw, 30px)/1.1 Georgia, "Times New Roman", serif;
+  letter-spacing: -.03em;
+  white-space: normal;
+}
+.listing-reference-price--featured .listing-price-currency {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 1.54em;
+  height: 1.54em;
+  border: 1px solid #dae1d2;
+  border-radius: 50%;
+  background: #eff2e9;
+  color: #3b5231;
+  font: 600 .74em/1 system-ui, sans-serif;
+}

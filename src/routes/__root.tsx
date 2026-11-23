@@ -1,4 +1,5 @@
 import { BrandProvider } from "@/components/aawash/cms/BrandProvider";
+import { Splash, SplashHead } from "@/components/aawash/landing/Splash";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -154,11 +155,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <SplashHead />
         <HeadContent />
       </head>
       <body>
+        <Splash />
         {children}
         <Scripts />
       </body>
@@ -245,7 +248,6 @@ function RootComponent() {
         !ecoHome &&
         (role === "team_leader" || role === "member" || role === "super_admin") && (
           <EcoDock
-            architectural
             role={
               role === "super_admin"
                 ? pathname.startsWith("/leader")

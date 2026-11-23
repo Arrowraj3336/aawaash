@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import ecoBuilding from "@/assets/eco-tower-wire.png.asset.json";
 
 /* ------------------------------------------------------------------ *
  * EcoLivingScene — the dashboard hero artwork.
@@ -208,7 +207,7 @@ export function EcoLivingScene() {
         />
         <img
           ref={towerRef}
-          src={ecoBuilding.url}
+          src="/images/eco-tower-wire.webp"
           alt=""
           data-testid="eco-hero-image"
           loading="lazy"

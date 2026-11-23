@@ -67,52 +67,36 @@ export const SECTION_SPECS: SectionSpec[] = [
   {
     id: "commission",
     label: "Commission slabs",
-    hint: "Tiered commission ladder.",
+    hint: "Tiered commission ladder on the Commission Earnings page.",
     fields: ["eyebrow", "title", "accent", "subtitle", "image"],
     copy: { tierLabel: "Tier label", valueLabel: "Deal value label" },
     items: { label: "Slabs", titleLabel: "Range", bodyLabel: "Optional display note", limit: 6 },
   },
   {
-    id: "stats",
-    label: "Statistics",
-    hint: "Animated counters strip.",
-    fields: ["eyebrow", "title", "accent"],
-    items: { label: "Counters", titleLabel: "Label", bodyLabel: "Value (number)" },
-  },
-  {
     id: "lifestyle",
     label: "Lifestyle amenities",
-    hint: "Amenities list with a supporting photo.",
+    hint: "Garden artwork and the amenities shown on the homepage.",
     fields: ["eyebrow", "title", "accent", "subtitle", "image"],
-    copy: { photoTitle: "Photo caption heading", photoBody: "Photo caption text" },
     items: { label: "Amenities", titleLabel: "Amenity", bodyLabel: "Description" },
-  },
-  {
-    id: "discover",
-    label: "Explore residences banner",
-    hint: "A photo banner that links to the project collection.",
-    fields: ["eyebrow", "title", "subtitle", "image"],
-    copy: { action: "Explore button" },
-  },
-  {
-    id: "how",
-    label: "How it works",
-    hint: "Company → leader → member → payout ladder.",
-    fields: ["eyebrow", "title", "subtitle"],
-    items: { label: "Steps", titleLabel: "Step", bodyLabel: "Description" },
   },
   {
     id: "faq",
     label: "FAQ",
-    hint: "Frequently asked questions.",
-    fields: ["eyebrow", "title"],
+    hint: "Frequently asked questions and architectural artwork.",
+    fields: ["eyebrow", "title", "image"],
     items: { label: "Questions", titleLabel: "Question", bodyLabel: "Answer" },
+  },
+  {
+    id: "residencesBanner",
+    label: "Find Your Next Home banner",
+    hint: "Artwork displayed above Contact. The banner links to the projects page.",
+    fields: ["title", "image"],
   },
   {
     id: "contact",
     label: "Contact",
-    hint: "Contact details and enquiry form.",
-    fields: ["eyebrow", "title", "subtitle"],
+    hint: "Contact details, architectural artwork, and enquiry form.",
+    fields: ["eyebrow", "title", "accent", "subtitle", "image"],
     copy: { nameLabel: "Name field", emailLabel: "Email field", mobileLabel: "Mobile field", messageLabel: "Message field", action: "Enquiry button", recipient: "Enquiry email (defaults to the Email detail)", subject: "Enquiry email subject" },
     items: { label: "Details", titleLabel: "Label", bodyLabel: "Value" },
   },
@@ -128,34 +112,32 @@ export const SECTION_SPECS: SectionSpec[] = [
 export const DEFAULT_HOMEPAGE: HomepageDoc = {
   header: {
     enabled: true,
-    copy: { home: "Home", projects: "Projects", how: "How It Works", contact: "Contact", login: "Login", explore: "Explore", mobileExplore: "Explore Projects" },
+    copy: { home: "Home", projects: "Flats for Sale", how: "Buying & Selling", contact: "Enquire", login: "Login", explore: "Browse Flats", mobileExplore: "Browse Flats" },
   },
   hero: {
     enabled: true,
-    eyebrow: "REAL ESTATE — CONSTRUCTION — DEVELOPMENT",
-    title: "More Than Just A",
-    accent: "Home.",
-    subtitle: "Premium homes, trusted construction and landmark developments for modern living.",
+    eyebrow: "We Don’t Just Sell Walls and Roofs.",
+    title: "We Build Where",
+    accent: "Your Story Begins.",
+    subtitle: "Since 2017, Aawaash has been driven by one simple belief: buying a property shouldn’t feel like a gamble—it should feel like coming home.",
     image: "/images/sky-residence-hero.webp",
-    copy: { action: "Explore Projects", searchLabel: "Search projects", searchPlaceholder: "Search by city or project…", searchAction: "Search" },
+    copy: { action: "Explore Properties", searchLabel: "Find a Flat", searchPlaceholder: "Search by city or project…", searchAction: "Search" },
     items: ["Savitri Enclave", "27th Avenue", "Darbhanga"].map(title => ({ title })),
   },
   services: {
     enabled: true,
     items: [
-      { title: "Residences", body: "Premium residences" },
-      { title: "Construction", body: "End-to-end construction" },
-      { title: "Delivery", body: "Trusted delivery" },
-      { title: "Transparency", body: "Transparent process" },
-      { title: "Guidance", body: "Expert guidance" },
+      { title: "Buy a property", body: "Find a place for your next chapter" },
+      { title: "Sell your flat", body: "Discuss a direct purchase with Aawaash" },
+      { title: "Invest with clarity", body: "Explore property opportunities" },
     ],
   },
   projects: {
     enabled: true,
-    eyebrow: "Featured Projects",
-    title: "Landmark",
-    accent: "Residences",
-    copy: { featuredSlug: "savitri-enclave", action: "Explore Project", developer: "S.B.P. Buildcon Pvt. Ltd.", residences: "3 BHK", area: "1,763 – 2,016 sqft", priceLabel: "Starting from", priceFallback: "On Request" },
+    eyebrow: "SELECTED RESIDENCES",
+    title: "A home of",
+    accent: "your own",
+    copy: { featuredSlug: "savitri-enclave", action: "View Project", developer: "S.B.P. Buildcon Pvt. Ltd.", residences: "3 BHK", area: "1,763 – 2,016 sqft", priceLabel: "Starting from", priceFallback: "On Request" },
   },
   commission: {
     enabled: true,
@@ -174,22 +156,116 @@ export const DEFAULT_HOMEPAGE: HomepageDoc = {
       { title: "₹10 Cr+" },
     ],
   },
-  stats: {
-    enabled: true,
-    eyebrow: "OUR FOOTPRINT",
-    title: "Built on trust.",
-    accent: "Measured in milestones.",
-    items: [
-      { title: "Projects", body: "24" },
-      { title: "Buildings", body: "78" },
-      { title: "Flats Sold", body: "1240" },
-      { title: "Happy Customers", body: "950" },
-    ],
-  },
   lifestyle: {
     enabled: true,
+    image: "/images/home/lifestyle-garden-reference.webp",
+    eyebrow: "Lifestyle Amenities",
+    title: "Spaces for Everyday Living",
+    subtitle: "Curated amenities, biophilic design, and community spaces for calm, everyday luxury.",
+    items: [
+      { title: "Infinity Pool" },
+      { title: "Fitness Club" },
+      { title: "Sky Lounge" },
+      { title: "Green Trails" },
+    ],
+  },
+  faq: {
+    enabled: true,
+    eyebrow: "Frequently Asked",
+    title: "Buying and selling questions",
+    image: "/images/home/faq-architecture.webp",
+    items: [
+      {
+        title: "How do I buy a flat from Aawaash?",
+        body: "Yes. Browse our projects and contact us about the flat you’re interested in.",
+      },
+      {
+        title: "Does Aawaash buy flats directly from owners?",
+        body: "Yes. Send us your flat details for review. If the flat is a fit, we can discuss a direct purchase.",
+      },
+      {
+        title: "What should I include in a selling enquiry?",
+        body: "Share the property location, number of bedrooms, approximate area, and expected price.",
+      },
+      {
+        title: "Can I arrange a viewing before buying?",
+        body: "Yes. Contact Aawaash with the project or flat you’d like to visit to arrange a viewing.",
+      },
+      {
+        title: "How do I confirm the latest price and availability?",
+        body: "Contact Aawaash with the project and flat you’re considering to confirm the current price and availability.",
+      },
+    ],
+  },
+  residencesBanner: {
+    enabled: true,
+    title: "Find Your Next Home.",
+    image: "/images/home/find-your-next-home.webp",
+  },
+  contact: {
+    enabled: true,
+    copy: { nameLabel: "Your Name", emailLabel: "Email", mobileLabel: "Mobile", messageLabel: "Tell us if you’re buying or selling", action: "Open Enquiry Email", recipient: "", subject: "Aawaash flat enquiry" },
+    eyebrow: "Contact",
+    title: "Let’s build",
+    accent: "your team.",
+    subtitle: "We’ll help you onboard leaders, members, and your first project.",
+    image: "/images/home/contact-architecture.webp",
+    items: [
+      { title: "Phone", body: "+91 90000 00000" },
+      { title: "Email", body: "hello@aawash.app" },
+      { title: "Office", body: "Darbhanga, Bihar — 846004" },
+    ],
+  },
+  footer: {
+    enabled: true,
+    subtitle: "We build where your story begins. Property, with clarity, honesty, and genuine care since 2017.",
+    copy: { explore: "Explore", projects: "Flats for Sale", how: "Buying & Selling", commission: "Commission", faq: "FAQ", company: "Company", contact: "Contact", teams: "For Teams", action: "Login to Dashboard", copyright: "Aawaash. All rights reserved.", closing: "Buy or sell a flat with Aawaash." },
+  },
+};
+
+const PREVIOUS_SECTION_DEFAULTS: Record<string, Partial<HomeSection>>[] = [{
+  lifestyle: {
+    image: "/images/home/garden-lounge.webp",
+    eyebrow: "SPACES FOR WHAT’S NEXT",
+    title: "Everyday comfort.",
+    accent: "Future possibilities.",
+    subtitle: "A home, an investment, or a space to build your business. Discover a property that belongs in your future.",
+    items: [
+      { title: "Modern Apartments", body: "Designed for everyday comfort and the moments that matter." },
+      { title: "High-growth Plots", body: "Room to build your plans and invest in tomorrow." },
+      { title: "Commercial Spaces", body: "A place for your next business chapter." },
+    ],
+  },
+  faq: {
+    eyebrow: "GOOD QUESTIONS. CLEAR ANSWERS.",
+    title: "Let’s make it simple.",
+    items: [
+      {
+        title: "Can I buy a flat from Aawaash?",
+        body: "Yes. Browse our projects and contact us about the flat you’re interested in.",
+      },
+      {
+        title: "Does Aawaash buy flats directly from owners?",
+        body: "Yes. Send us your flat details for review. If the flat is a fit, we can discuss a direct purchase.",
+      },
+      {
+        title: "What should I include in a selling enquiry?",
+        body: "Share the property location, number of bedrooms, approximate area, and expected price.",
+      },
+      {
+        title: "Where can I see floor plans and availability?",
+        body: "Open a project page to see its floor plans and availability.",
+      },
+    ],
+  },
+  contact: {
+    eyebrow: "BUYER & SELLER ENQUIRIES",
+    title: "Tell us your next move.",
+    subtitle: "Buying? Share your preferred area and budget. Selling? Tell us where your flat is, its size, and your expected price.",
+  },
+}, {
+  lifestyle: {
     image: "/images/residence-lobby.webp",
-    copy: { photoTitle: "Wellness-first Living", photoBody: "Rooftop gardens, spa, and family-first design." },
     eyebrow: "Lifestyle Amenities",
     title: "A home that lives",
     accent: "beyond four walls.",
@@ -202,30 +278,7 @@ export const DEFAULT_HOMEPAGE: HomepageDoc = {
       { title: "Green Trails", body: "Cycling & jogging tracks" },
     ],
   },
-  discover: {
-    enabled: true,
-    eyebrow: "Aawaash Residences",
-    title: "Find your next home.",
-    subtitle: "Explore residences, compare floor plans, and check available flats.",
-    image: "/images/architecture-balcony.webp",
-    copy: { action: "Explore projects" },
-  },
-  how: {
-    enabled: true,
-    eyebrow: "Team System",
-    title: "A clear ladder, from listing to payout.",
-    subtitle:
-      "Aawash's simple structure keeps everyone aligned — company, leaders, members, and customers.",
-    items: [
-      { title: "Company", body: "Aawash curates and lists premium residential projects." },
-      { title: "Team Leader", body: "Each leader owns a team and drives regional sales." },
-      { title: "Members", body: "Members work with buyers and close sales on the ground." },
-      { title: "Customer Purchase", body: "Buyers book their home with total transparency." },
-      { title: "Commission Distribution", body: "Earnings flow automatically through the ladder." },
-    ],
-  },
   faq: {
-    enabled: true,
     eyebrow: "Frequently Asked",
     title: "Answers, in plain words.",
     items: [
@@ -252,23 +305,11 @@ export const DEFAULT_HOMEPAGE: HomepageDoc = {
     ],
   },
   contact: {
-    enabled: true,
-    copy: { nameLabel: "Your Name", emailLabel: "Email", mobileLabel: "Mobile", messageLabel: "Message", action: "Open email draft", recipient: "", subject: "Aawaash enquiry" },
     eyebrow: "Contact",
     title: "Let's build your team on Aawash.",
     subtitle: "Reach out — we'll help you onboard leaders, members, and your first project.",
-    items: [
-      { title: "Phone", body: "+91 90000 00000" },
-      { title: "Email", body: "hello@aawash.app" },
-      { title: "Office", body: "Darbhanga, Bihar — 846004" },
-    ],
   },
-  footer: {
-    enabled: true,
-    subtitle: "A premium real estate ecosystem — curated projects, transparent commissions, and a beautiful mobile-first dashboard.",
-    copy: { explore: "Explore", projects: "Projects", how: "How It Works", commission: "Commission", faq: "FAQ", company: "Company", contact: "Contact", teams: "For Teams", action: "Login to Dashboard", copyright: "Aawaash. All rights reserved.", closing: "Made with care for premium real estate teams." },
-  },
-};
+}];
 
 function cleanItems(v: unknown): HomeItem[] | undefined {
   if (!Array.isArray(v)) return undefined;
@@ -292,19 +333,30 @@ export function mergeHomepage(stored: unknown): HomepageDoc {
     const legacy = spec.id === "hero"
       ? { eyebrow: "Curated Luxury Residences · India", title: "Home isn't a place.", accent: "It's a feeling.", subtitle: "Aawash brings together premium residential projects, a professional team system, and transparent commission tracking — all in one elegant, mobile-first experience." }
       : spec.id === "projects" ? { eyebrow: "Featured Residence", title: "A home to", accent: "come home to." } : {};
+    const previousSections = PREVIOUS_SECTION_DEFAULTS.map(doc => doc[spec.id]).filter(Boolean);
     const pick = (k: FieldKey) => {
       const v = raw[k];
-      if (Object.hasOwn(legacy, k) && v === (legacy as Partial<Record<FieldKey, string>>)[k]) return base[k];
+      if (typeof v === "string" && (
+        v === (legacy as Partial<Record<FieldKey, string>>)[k]
+        || previousSections.some(section => section?.[k] === v)
+      )) return base[k];
       return typeof v === "string" ? v : base[k];
     };
+    const savedItems = cleanItems(raw.items)?.slice(0, spec.items?.limit);
+    const hasStockItems = savedItems !== undefined && previousSections.some(({ items }) =>
+      items?.length === savedItems.length && items.every((item, index) =>
+        item.title === savedItems[index]?.title && item.body === savedItems[index]?.body));
     out[spec.id] = {
       enabled: typeof raw.enabled === "boolean" ? raw.enabled : (base.enabled ?? true),
       eyebrow: pick("eyebrow"),
       title: pick("title"),
-      accent: pick("accent"),
+      accent: spec.id === "contact" && typeof raw.title === "string"
+        && pick("title") !== base.title && typeof raw.accent !== "string"
+        ? undefined
+        : pick("accent"),
       subtitle: pick("subtitle"),
       image: pick("image"),
-      items: cleanItems(raw.items)?.slice(0, spec.items?.limit) ?? base.items,
+      items: hasStockItems ? base.items : savedItems ?? base.items,
       copy: Object.fromEntries(Object.entries(base.copy ?? {}).map(([key, fallback]) => {
         const value = (raw.copy as Record<string, unknown> | undefined)?.[key];
         return [key, typeof value === "string" ? value : fallback];

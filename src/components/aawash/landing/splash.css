@@ -1,0 +1,69 @@
+#home-opening { display: none; }
+
+:root[data-home-opening] {
+  overflow: hidden;
+  background: #faf6f5;
+}
+
+:root[data-home-opening] body > :not(#home-opening) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+:root[data-home-opening] #home-opening {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  padding-bottom: max(1.4rem, env(safe-area-inset-bottom));
+  background: #faf6f5;
+}
+
+.opening-build {
+  align-self: center;
+  width: min(91vw, 70svh, 490px);
+  height: auto;
+  overflow: visible;
+}
+
+[data-home-opening] .opening-grid { animation: opening-grid var(--opening-duration) ease both; }
+[data-home-opening] .opening-foundation { animation: opening-settle .58s ease-out both; }
+[data-home-opening] .opening-storey { animation: opening-settle .7s var(--level-delay) cubic-bezier(.22,.75,.24,1) both; }
+[data-home-opening] .opening-glazing { animation: opening-glaze .44s calc(var(--level-delay) + .42s) ease-out both; }
+[data-home-opening] .opening-roof { animation: opening-settle .64s 2.78s ease-out both; }
+[data-home-opening] .opening-landscape { animation: opening-landscape-finish .58s calc(var(--opening-duration) - .58s) ease-out both; }
+
+.opening-brand {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  color: #253126;
+  font: 600 clamp(1.35rem, 5vw, 1.8rem)/1 Georgia, serif;
+}
+
+.opening-brand img { width: 3rem; height: 3rem; object-fit: contain; }
+.opening-spinner {
+  width: 1rem;
+  height: 1rem;
+  margin-inline-start: .35rem;
+  border: 2px solid #d6ded0;
+  border-top-color: #506141;
+  border-radius: 50%;
+  animation: opening-spin .75s linear infinite;
+}
+
+@keyframes opening-grid {
+  0% { opacity: 0; transform: translateY(5px); }
+  20%, 60% { opacity: .5; transform: none; }
+  100% { opacity: .24; transform: none; }
+}
+@keyframes opening-settle {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes opening-glaze { from { opacity: 0; } to { opacity: 1; } }
+@keyframes opening-landscape-finish { from { opacity: 0; } to { opacity: 1; } }
+@keyframes opening-spin { to { transform: rotate(360deg); } }

@@ -9,7 +9,6 @@ import {
   Building2,
   Plus,
   Search,
-  MapPin,
   Archive,
   Undo2,
   Copy,
@@ -29,7 +28,7 @@ import {
   adminRestoreProject,
   adminDuplicateProject,
 } from "@/lib/project-admin.functions";
-import { formatINR } from "@/components/aawash/dashboard-kit";
+import { ProjectCard } from "@/components/aawash/projects/ProjectCard";
 
 export const Route = createFileRoute("/_authenticated/admin/projects/")({
   component: AdminProjectsPage,
@@ -202,51 +201,17 @@ function AdminProjectsContent() {
               ? Math.round(((p.sold_flats ?? 0) / p.total_flats) * 100)
               : 0;
             return (
-              <div
-                key={p.id}
-                className="group relative flex flex-col overflow-hidden rounded-4xl border border-border bg-surface shadow-[var(--shadow-soft)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-float)]"
-              >
-                <div
-                  className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5"
-                  style={
-                    p.thumbnail_url || p.cover_url || p.hero_banner_url
-                      ? {
-                          backgroundImage: `url(${p.thumbnail_url || p.cover_url || p.hero_banner_url})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }
-                      : undefined
-                  }
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                  <div className="absolute left-3 top-3 flex gap-1.5">
-                    {p.is_deleted && (
-                      <span className="rounded-full bg-slate-900/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                        Archived
-                      </span>
-                    )}
-                    {p.tag && (
-                      <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-foreground">
-                        {p.tag}
+              <ProjectCard key={p.id} project={p} manage animate={false}>
+                <div className="grid gap-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {p.is_deleted && <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700">Archived</span>}
+                    {p.tag && <span className="rounded-full bg-gold/15 px-2 py-1 text-xs text-foreground">{p.tag}</span>}
+                    {p.construction_status && (
+                      <span className={`rounded-full border px-2 py-1 text-xs capitalize ${STATUS_TINTS[p.construction_status] ?? "border-border text-foreground"}`}>
+                        {p.construction_status.replace(/_/g, " ")}
                       </span>
                     )}
                   </div>
-                  <span
-                    className={`absolute right-3 top-3 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_TINTS[p.construction_status] ?? "bg-primary/20 text-primary-foreground border-primary/30"}`}
-                  >
-                    {p.construction_status?.replace(/_/g, " ")}
-                  </span>
-                </div>
-
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <div className="min-w-0">
-                    <h3 className="truncate text-lg font-bold text-foreground">{p.name}</h3>
-                    <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
-                      <MapPin size={12} />
-                      {p.location}
-                    </p>
-                  </div>
-
                   <div className="grid grid-cols-4 gap-2 text-center">
                     <StatBox icon={<Building2 size={12} />} label="Bldgs" value={p.total_buildings ?? 0} />
                     <StatBox icon={<Layers size={12} />} label="Floors" value={p.total_floors ?? 0} />
@@ -264,11 +229,6 @@ function AdminProjectsContent() {
                     <div className="rounded-lg bg-rose-500/15 px-2 py-1.5 text-center text-rose-700">
                       {p.sold_flats ?? 0} Sold
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between border-t border-border pt-3 text-xs">
-                    <span className="text-muted-foreground">From</span>
-                    <span className="font-bold text-foreground">{formatINR(p.price_from ?? 0)}</span>
                   </div>
 
                   <div className="mt-auto flex flex-wrap items-center gap-2">
@@ -306,7 +266,7 @@ function AdminProjectsContent() {
                     )}
                   </div>
                 </div>
-              </div>
+              </ProjectCard>
             );
           })}
         </div>
